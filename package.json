@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "dev:https": "vite dev --host --https --force --port 443",
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
@@ -18,16 +19,19 @@
     "wagmi": "^1.4.5"
   },
   "devDependencies": {
+    "@originjs/vite-plugin-commonjs": "^1.0.3",
     "@types/react": "^18.2.36",
     "@types/react-dom": "^18.2.14",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
     "@typescript-eslint/parser": "^6.10.0",
+    "@vitejs/plugin-react": "^4.1.1",
     "@vitejs/plugin-react-swc": "^3.4.1",
     "eslint": "^8.53.0",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.4",
     "typescript": "^5.2.2",
-    "vite": "^4.5.0"
+    "vite": "^4.5.0",
+    "vite-plugin-mkcert": "^1.16.0"
   }
 }
