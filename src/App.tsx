@@ -18,7 +18,7 @@ export default function App() {
   const onConnect = async () => {
     try {
       const url = buildConnectUrl({
-        redirectURL: "https://joyid-bot.dev/",
+        redirectURL: "https://joyid-bot.vercel.app/",
       });
       window.open(url, "_blank")
     } catch (error) {
