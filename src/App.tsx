@@ -1,6 +1,6 @@
 import * as React from "react";
 import {Address} from "viem";
-import {connectCallback, connectWithRedirect, disconnect, getConnectedAddress} from "@joyid/evm";
+import {connectCallback, disconnect, getConnectedAddress, buildConnectUrl} from "@joyid/evm";
 import "./App.css";
 
 export default function App() {
@@ -17,7 +17,10 @@ export default function App() {
 
   const onConnect = async () => {
     try {
-      connectWithRedirect("https://joyid-bot.dev/");
+      const url = buildConnectUrl({
+        redirectURL: "https://joyid-bot.dev/",
+      });
+      window.open(url, "_blank")
     } catch (error) {
       console.log(error);
     }
