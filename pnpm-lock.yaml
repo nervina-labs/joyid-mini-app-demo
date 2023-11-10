@@ -11,6 +11,9 @@ dependencies:
   '@joyid/wagmi':
     specifier: ^0.1.0
     version: 0.1.0(viem@1.18.8)(wagmi@1.4.5)
+  '@vkruglikov/react-telegram-web-app':
+    specifier: ^2.1.5
+    version: 2.1.5(react-dom@18.2.0)(react@18.2.0)
   react:
     specifier: ^18.2.0
     version: 18.2.0
@@ -1529,6 +1532,16 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /@vkruglikov/react-telegram-web-app@2.1.5(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-OBt/5TvoNMZ4Axb20fFVYGKsOnsyjG93dGEAfmMnRwPJ7deIYkcnFjGPiil6CtogUc5qdwoHDFrwQWxsYF/RAg==}
+    peerDependencies:
+      react: ^18
+      react-dom: ^18
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
 
   /@wagmi/connectors@3.1.3(@types/react@18.2.36)(react@18.2.0)(typescript@5.2.2)(viem@1.18.8):
     resolution: {integrity: sha512-UgwsQKQDFObJVJMf9pDfFoXTv710o4zrTHyhIWKBTMMkLpCMsMxN5+ZaDhBYt/BgoRinfRYQo8uwuwLhxE6Log==}

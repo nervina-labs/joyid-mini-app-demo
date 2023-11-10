@@ -1,26 +1,20 @@
 import * as React from "react";
 import {Address} from "viem";
-import {connectCallback, disconnect, getConnectedAddress, buildConnectUrl} from "@joyid/evm";
+import {disconnect, getConnectedAddress, buildConnectUrl} from "@joyid/evm";
+import {useWebApp} from "@vkruglikov/react-telegram-web-app"
+import {WebApp} from "@vkruglikov/react-telegram-web-app/lib/core/twa-types";
 import "./App.css";
 
 export default function App() {
   const [address, setAddress] = React.useState<Address | null>(getConnectedAddress());
-
-  React.useEffect(() => {
-    try {
-      const res = connectCallback(window.location.href);
-      setAddress(res.address as Address);
-    } catch (error) {
-      //
-    }
-  }, [window.location.href]);
+  const webApp = useWebApp() as WebApp;
 
   const onConnect = async () => {
     try {
       const url = buildConnectUrl({
         redirectURL: "https://joyid-bot.vercel.app/",
       });
-      window.open(url, "_blank")
+      webApp.openLink && webApp.openLink(url);
     } catch (error) {
       console.log(error);
     }
