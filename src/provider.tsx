@@ -9,7 +9,7 @@ export const {chains, publicClient} = configureChains([sepolia, polygonMumbai], 
 export const joyidConnector = new JoyIdConnector({
   chains,
   options: {
-    name: "JoyID demo",
+    name: "JoyID Bot",
     logo: "https://fav.farm/🆔",
     joyidAppURL: "https://testnet.joyid.dev",
   },

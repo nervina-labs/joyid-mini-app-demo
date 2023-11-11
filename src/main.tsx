@@ -5,7 +5,7 @@ import App from "./App";
 import "./index.css";
 
 initConfig({
-  name: "JoyID demo",
+  name: "JoyID Bot",
   logo: "https://fav.farm/🆔",
   joyidAppURL: "https://testnet.joyid.dev",
 });
