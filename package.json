@@ -6,6 +6,7 @@
   "scripts": {
     "dev:https": "vite dev --host --https --force --port 443",
     "dev": "vite",
+    "test": "vitest",
     "build": "tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint \"src/*.{ts, tsx}\" --fix",
@@ -38,6 +39,7 @@
     "tailwindcss": "^3.3.5",
     "typescript": "^5.2.2",
     "vite": "^4.5.0",
-    "vite-plugin-mkcert": "^1.16.0"
+    "vite-plugin-mkcert": "^1.16.0",
+    "vitest": "^0.34.6"
   }
 }
