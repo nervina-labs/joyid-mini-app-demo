@@ -136,7 +136,7 @@ export default function App() {
 
 
   return (
-    <div id="app">
+    <div id="app" className="text-sm">
       {address ? (
         <>
           <h1 className="text-xl mb-4">{`Connected: ${address}`}</h1>
