@@ -32,7 +32,7 @@ export const generateToken = (initData: string, action: Action) => {
 export const buildConnectTokenAndUrl = (initData: string) => {
   const token = generateToken(initData, Action.Connect);
   const url = buildConnectUrl({
-    joyidAppURL: `${JOYID_APP_URL}?token=${token}}`,
+    joyidAppURL: `${JOYID_APP_URL}?token=${token}`,
     redirectURL: JOYID_MINI_APP_URL,
   });
   return {token, url}
@@ -42,7 +42,7 @@ export const buildSignMsgTokenAndUrl = (initData: string, address: Hex, message:
   const token = generateToken(initData, Action.Connect);
   const url = buildSignMessageUrl(message, {
     address,
-    joyidAppURL: `${JOYID_APP_URL}?token=${token}}`,
+    joyidAppURL: `${JOYID_APP_URL}?token=${token}`,
     redirectURL: JOYID_MINI_APP_URL,
   });
   return {token, url};
@@ -53,7 +53,7 @@ export const buildSendTxTokenAndUrl = (initData: string, address: Hex, tx: Trans
   const url = buildSignTxURL({
     tx,
     signerAddress: address,
-    joyidAppURL: `${JOYID_APP_URL}?token=${token}}`,
+    joyidAppURL: `${JOYID_APP_URL}?token=${token}`,
     redirectURL: JOYID_MINI_APP_URL,
   });
   return {token, url};
