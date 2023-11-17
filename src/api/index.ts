@@ -1,8 +1,12 @@
 import axios, { AxiosInstance } from 'axios'
 import { BASE_SERVER_URL } from '../env';
 
+export enum QueryKey {
+  GetBotMessage = "GetBotMessage",
+}
+
 export interface BotResponse {
-  result: string
+  message: string
 }
 
 class API {
@@ -15,8 +19,8 @@ class API {
     })
   }
 
-  public getBotState(token: string) {
-    return this.axios.get<BotResponse>(`/api/v1/bot_token${token}`);
+  public getTgBotMessage(token: string) {
+    return this.axios.get<BotResponse>(`/api/v1/message${token}`);
   }
 
 }

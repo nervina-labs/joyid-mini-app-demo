@@ -1,101 +1,98 @@
-import React, {useMemo, useState} from "react";
+import React, {useState} from "react";
 import {Address, Hex, parseEther} from "viem";
 import {useQuery} from "react-query";
-import {disconnect, buildConnectUrl, buildSignMessageUrl, buildSignTxURL} from "@joyid/evm";
+import {disconnect} from "@joyid/evm";
 import {useWebApp} from "@vkruglikov/react-telegram-web-app"
 import {WebApp} from "@vkruglikov/react-telegram-web-app/lib/core/twa-types";
 import "./App.css";
-import { Action, generateToken } from "./helper";
-import { JOYID_APP_URL } from "./env";
-import { api } from "./api";
-import { QueryKey } from "./api/QueryKey";
+import { buildConnectTokenAndUrl, buildSendTxTokenAndUrl, buildSignMsgTokenAndUrl } from "./helper";
+import {api, QueryKey} from "./api";
 
 export default function App() {
   const [address, setAddress] = useState<Address | null>(null);
   const [message, setMessage] = useState<string>('');
   const [toAddress, setToAddress] = useState<string>("");
   const [amount, setAmount] = useState<number>(0);
-  const [signature, setSignature]= useState('')
-  const [txHash, setTxHash] = useState('')
+  const webApp = useWebApp() as WebApp;
 
   const [connectLoading, setConnectLoading] = useState(false);
   const [signLoading, setSignLoading] = useState(false);
   const [sendLoading, setSendLoading] = useState(false);
 
-  const webApp = useWebApp() as WebApp;
-
-  const {connectTgToken, signTgToken, sendTgToken} = useMemo(() => {
-    const userId = webApp.initData;
-    return {
-      connectTgToken: generateToken(userId, Action.Connect),
-      signTgToken: generateToken(userId, Action.Sign),
-      sendTgToken: generateToken(userId, Action.Send),
-    };
-  }, [webApp.initData]);
-
-  const onChange = (set: Function) => {
-    return (e: React.FormEvent<HTMLInputElement>) => {
-      set(e.currentTarget.value);
-    }
-  }
-
-  useQuery([QueryKey.GetBotState, "connect"], async () => {
-    const res = await api.getBotState(connectTgToken);
-    setAddress(res.data.result as Hex)
-    setConnectLoading(false);
-  }, {
-    enabled: connectLoading && !address,
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-    refetchOnWindowFocus: false,
-    refetchInterval: 500,
-    retry: 240,
-  });
+  const [connectToken, setConnectToken] = useState("");
+  const [signToken, setSignToken] = useState("");
+  const [sendToken, setSendToken] = useState("");
 
   useQuery(
-    [QueryKey.GetBotState, "sign"],
+    [QueryKey.GetBotMessage, "connect"],
     async () => {
-      const res = await api.getBotState(signTgToken);
-      setSignature(res.data.result)
-      setSignLoading(false)
+      const {data} = await api.getTgBotMessage(connectToken);
+      return data.message
     },
     {
-      enabled: signLoading && !signature,
+      enabled: !!webApp.initData && connectLoading && !address,
       refetchOnMount: false,
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
       refetchInterval: 500,
       retry: 240,
+      onSuccess(data) {
+        setAddress(data as Hex);
+        setSendLoading(false);
+      },
     }
   );
 
   useQuery(
-    [QueryKey.GetBotState, "send"],
+    [QueryKey.GetBotMessage, "sign"],
     async () => {
-      const res = await api.getBotState(sendTgToken);
-      setTxHash(res.data.result)
-      setSendLoading(false)
+      const {data} = await api.getTgBotMessage(signToken);
+      return data.message
     },
     {
-      enabled: sendLoading && !txHash,
+      enabled: !!webApp.initData && signLoading && !!address,
       refetchOnMount: false,
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
       refetchInterval: 500,
       retry: 240,
+      onSuccess(data) {
+        setSignLoading(false);
+        alert(`Signature: ${data}`);
+      },
+    }
+  );
+
+  useQuery(
+    [QueryKey.GetBotMessage, "send"],
+    async () => {
+      const {data} = await api.getTgBotMessage(sendToken);
+      return data.message;
+    },
+    {
+      enabled: !!webApp.initData && sendLoading && !!address,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+      refetchInterval: 500,
+      retry: 240,
+      onSuccess(data) {
+        setSendLoading(false);
+        alert(`Transaction hash: ${data}`);
+      },
     }
   );
   
 
   const onConnect = () => {
+    if (webApp.initData.length === 0) {
+      alert('Please open the web app in Telegram')
+      return 
+    }
     try {
-      const userId = webApp.initData
-      const token = generateToken(userId, Action.Connect);
+      const {token, url} = buildConnectTokenAndUrl(webApp.initData);
+      setConnectToken(token);
       setConnectLoading(true);
-      const url = buildConnectUrl({
-        joyidAppURL: `${JOYID_APP_URL}?token=${token}}`,
-        redirectURL: "https://joyid-bot.vercel.app/",
-      });
       webApp.openLink && webApp.openLink(url);
     } catch (error) {
       console.log(error);
@@ -103,14 +100,14 @@ export default function App() {
   };
 
   const onSignMessage = () => {
+    if (webApp.initData.length === 0) {
+      alert("Please open the web app in Telegram");
+      return;
+    }
     try {
-      const userId = webApp.initData;
-      setSignLoading(true)
-      const url = buildSignMessageUrl(message, {
-        address: address!,
-        joyidAppURL: `${JOYID_APP_URL}?token=${generateToken(userId, Action.Connect)}}`,
-        redirectURL: "https://joyid-bot.vercel.app/",
-      });
+      const {token, url} = buildSignMsgTokenAndUrl(webApp.initData, address!, message);
+      setSignToken(token);
+      setSignLoading(true);
       webApp.openLink && webApp.openLink(url);
     } catch (error) {
       console.log(error);
@@ -118,19 +115,19 @@ export default function App() {
   }
 
   const onSendTx = async () => {
+    if (webApp.initData.length === 0) {
+      alert("Please open the web app in Telegram");
+      return;
+    }
     try {
-      const userId = webApp.initData;
+      const tx = {
+        to: toAddress as Hex,
+        from: address! as Hex,
+        value: parseEther(amount.toString()).toString(),
+      };
+      const {token, url} = buildSendTxTokenAndUrl(webApp.initData, address!, tx);
+      setSendToken(token);
       setSendLoading(true);
-      const url = buildSignTxURL({
-        tx: {
-          to: toAddress as Hex,
-          from: address! as Hex,
-          value: parseEther(amount.toString()).toString(),
-        },
-        signerAddress: address!,
-        joyidAppURL: `${JOYID_APP_URL}?token=${generateToken(userId, Action.Connect)}}`,
-        redirectURL: "https://joyid-bot.vercel.app/",
-      });
       webApp.openLink && webApp.openLink(url);
     } catch (error) {
       console.log(error);
@@ -149,7 +146,7 @@ export default function App() {
               type="text"
               placeholder="Type message"
               className="input input-bordered input-accent w-full max-w-xs mt-[4px]"
-              onChange={onChange(setMessage)}
+              onChange={(e) => setMessage(e.currentTarget.value)}
             />
             <div>
               <button className="btn btn-primary mt-[10px] w-[120px] capitalize" disabled={!message} onClick={onSignMessage}>
@@ -165,13 +162,13 @@ export default function App() {
               type="text"
               placeholder="To address"
               className="input input-bordered input-accent w-full max-w-xs mt-[8px]"
-              onChange={onChange(setToAddress)}
+              onChange={(e) => setToAddress(e.currentTarget.value)}
             />
             <input
               type="number"
               placeholder="Amount"
               className="input input-bordered input-accent w-full max-w-xs mt-[8px]"
-              onChange={onChange(setAmount)}
+              onChange={(e) => setAmount(Number(e.currentTarget.value))}
             />
             <div>
               <button className="btn btn-primary mt-[10px] w-[60px] capitalize" disabled={amount <= 0 || !toAddress} onClick={onSendTx}>
