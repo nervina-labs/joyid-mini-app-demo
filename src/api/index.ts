@@ -5,8 +5,8 @@ export enum QueryKey {
   GetBotMessage = "GetBotMessage",
 }
 
-export interface BotResponse {
-  message: string
+export interface BotResponse<T> {
+  message: T
 }
 
 class API {
@@ -19,10 +19,22 @@ class API {
     })
   }
 
-  public getTgBotMessage(token: string) {
-    return this.axios.get<BotResponse>(`/api/v1/message${token}`);
+  public getTgBotMessage<T>(token: string) {
+    return this.axios.get<BotResponse<T>>(`/api/v1/message${token}`);
   }
 
 }
 
 export const api = new API();
+
+export interface ConnectResp {
+  address: string;
+}
+
+export interface SignResp {
+  signature: string;
+}
+
+export interface SendResp {
+  txHash: string;
+}

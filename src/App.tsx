@@ -6,7 +6,7 @@ import {useWebApp} from "@vkruglikov/react-telegram-web-app"
 import {WebApp} from "@vkruglikov/react-telegram-web-app/lib/core/twa-types";
 import "./App.css";
 import { buildConnectTokenAndUrl, buildSendTxTokenAndUrl, buildSignMsgTokenAndUrl } from "./helper";
-import {api, QueryKey} from "./api";
+import {api, ConnectResp, QueryKey, SendResp, SignResp} from "./api";
 
 export default function App() {
   const [address, setAddress] = useState<Address | null>(null);
@@ -26,11 +26,11 @@ export default function App() {
   useQuery(
     [QueryKey.GetBotMessage, "connect"],
     async () => {
-      const {data} = await api.getTgBotMessage(connectToken);
-      return data.message
+      const {data} = await api.getTgBotMessage<ConnectResp>(connectToken);
+      return data.message.address
     },
     {
-      enabled: !!webApp.initData && connectLoading && !address,
+      enabled: !!webApp.initData && connectLoading,
       refetchOnMount: false,
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
@@ -46,8 +46,8 @@ export default function App() {
   useQuery(
     [QueryKey.GetBotMessage, "sign"],
     async () => {
-      const {data} = await api.getTgBotMessage(signToken);
-      return data.message
+      const {data} = await api.getTgBotMessage<SignResp>(signToken);
+      return data.message.signature
     },
     {
       enabled: !!webApp.initData && signLoading && !!address,
@@ -66,8 +66,8 @@ export default function App() {
   useQuery(
     [QueryKey.GetBotMessage, "send"],
     async () => {
-      const {data} = await api.getTgBotMessage(sendToken);
-      return data.message;
+      const {data} = await api.getTgBotMessage<SendResp>(sendToken);
+      return data.message.txHash;
     },
     {
       enabled: !!webApp.initData && sendLoading && !!address,
