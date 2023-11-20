@@ -8,6 +8,8 @@ import "./App.css";
 import { buildConnectTokenAndUrl, buildSendTxTokenAndUrl, buildSignMsgTokenAndUrl } from "./helper";
 import {api, ConnectResp, QueryKey, SendResp, SignResp} from "./api";
 
+const USER_REJECTED = 'rejected'
+
 export default function App() {
   const [address, setAddress] = useState<Address | null>(null);
   const [message, setMessage] = useState<string>('');
@@ -26,8 +28,8 @@ export default function App() {
   useQuery(
     [QueryKey.GetBotMessage, "connect"],
     async () => {
-      const {data} = await api.getTgBotMessage<ConnectResp>(connectToken);
-      return data.message.address
+      const {address} = await api.getTgBotMessage<ConnectResp>(connectToken);
+      return address
     },
     {
       enabled: !!webApp.initData && connectLoading,
@@ -36,9 +38,13 @@ export default function App() {
       refetchOnWindowFocus: false,
       refetchInterval: 500,
       retry: 240,
-      onSuccess(data) {
-        setAddress(data as Hex);
-        setSendLoading(false);
+      onSuccess(addr) {
+        setConnectLoading(false);
+        if (addr === USER_REJECTED) {
+          alert("User Rejected");
+        } else {
+          setAddress(addr as Hex);
+        }
       },
     }
   );
@@ -46,8 +52,8 @@ export default function App() {
   useQuery(
     [QueryKey.GetBotMessage, "sign"],
     async () => {
-      const {data} = await api.getTgBotMessage<SignResp>(signToken);
-      return data.message.signature
+      const {signature} = await api.getTgBotMessage<SignResp>(signToken);
+      return signature;
     },
     {
       enabled: !!webApp.initData && signLoading && !!address,
@@ -56,9 +62,13 @@ export default function App() {
       refetchOnWindowFocus: false,
       refetchInterval: 500,
       retry: 240,
-      onSuccess(data) {
+      onSuccess(sig) {
         setSignLoading(false);
-        alert(`Signature: ${data}`);
+        if (sig === USER_REJECTED) {
+          alert("User Rejected");
+        } else { 
+          alert(`Signature: ${sig}`);
+        }
       },
     }
   );
@@ -66,8 +76,8 @@ export default function App() {
   useQuery(
     [QueryKey.GetBotMessage, "send"],
     async () => {
-      const {data} = await api.getTgBotMessage<SendResp>(sendToken);
-      return data.message.txHash;
+      const {txHash} = await api.getTgBotMessage<SendResp>(sendToken);
+      return txHash;
     },
     {
       enabled: !!webApp.initData && sendLoading && !!address,
@@ -76,9 +86,13 @@ export default function App() {
       refetchOnWindowFocus: false,
       refetchInterval: 500,
       retry: 240,
-      onSuccess(data) {
+      onSuccess(txHash) {
         setSendLoading(false);
-        alert(`Transaction hash: ${data}`);
+        if (txHash === USER_REJECTED) {
+          alert("User Rejected");
+        } else {
+          alert(`Transaction hash: ${txHash}`);
+        }
       },
     }
   );
@@ -139,7 +153,8 @@ export default function App() {
     <div id="app" className="text-sm">
       {address ? (
         <>
-          <h1 className="text-xl mb-4">{`Connected: ${address}`}</h1>
+          <h1 className="text-xl mb-4">Connected: </h1>
+          <h1 className="text-sm mb-4">{address}</h1>
           <div className="my-[30px]">
             <h2 className="text-xl">Sign message: </h2>
             <input
@@ -191,7 +206,7 @@ export default function App() {
           <div className="divider" />
         </>
       ) : (
-        <button className="btn btn-primary capitalize w-[120px]" onClick={onConnect}>
+        <button className="btn btn-primary capitalize w-[140px]" onClick={onConnect}>
           {connectLoading ? <span className="loading loading-spinner loading-md" /> : " Connect JoyID"}
         </button>
       )}

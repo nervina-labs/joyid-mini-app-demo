@@ -39,7 +39,7 @@ export const buildConnectTokenAndUrl = (initData: string) => {
 };
 
 export const buildSignMsgTokenAndUrl = (initData: string, address: Hex, message: string | Uint8Array) => {
-  const token = generateToken(initData, Action.Connect);
+  const token = generateToken(initData, Action.Sign);
   const url = buildSignMessageUrl(message, {
     address,
     joyidAppURL: `${JOYID_APP_URL}?token=${token}`,
@@ -49,7 +49,7 @@ export const buildSignMsgTokenAndUrl = (initData: string, address: Hex, message:
 };
 
 export const buildSendTxTokenAndUrl = (initData: string, address: Hex, tx: TransactionRequest) => {
-  const token = generateToken(initData, Action.Connect);
+  const token = generateToken(initData, Action.Send);
   const url = buildSignTxURL({
     tx,
     signerAddress: address,

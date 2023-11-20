@@ -6,7 +6,7 @@ export enum QueryKey {
 }
 
 export interface BotResponse<T> {
-  message: T
+  message: string
 }
 
 class API {
@@ -19,8 +19,10 @@ class API {
     })
   }
 
-  public getTgBotMessage<T>(token: string) {
-    return this.axios.get<BotResponse<T>>(`/api/v1/message${token}`);
+  public async getTgBotMessage<T>(token: string) {
+    const res = await this.axios.get<BotResponse<T>>( `/api/v1/messages/${ token }` );
+    const message = res.data.message;
+    return JSON.parse( message ) as T;
   }
 
 }
