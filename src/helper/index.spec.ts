@@ -12,14 +12,14 @@ describe("generate telegram mini app token", () => {
   });
 
   it("sign token", async () => {
-    const token = generateToken(TGInitData, Action.Sign);
+    const token = generateToken(TGInitData, Action.SignMsg);
     expect(token.length).toBe(76);
     expect(token.substring(0, 68)).toBe("signcd6f828cfb86eba318e4f85733c9178fd6c7c45256034604f67463c36282d2cc");
   });
 
 
   it("sign token", async () => {
-    const token = generateToken(TGInitData, Action.Send);
+    const token = generateToken(TGInitData, Action.SendTx);
     expect(token.length).toBe(76);
     expect(token.substring(0, 68)).toBe("sendcd6f828cfb86eba318e4f85733c9178fd6c7c45256034604f67463c36282d2cc");
   });

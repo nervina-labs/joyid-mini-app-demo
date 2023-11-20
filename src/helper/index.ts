@@ -4,8 +4,8 @@ import { JOYID_APP_URL, JOYID_MINI_APP_URL } from "../env";
 
 export enum Action {
   Connect,
-  Sign,
-  Send,
+  SignMsg,
+  SendTx,
 }
 
 const Colon = '%3A'
@@ -22,7 +22,7 @@ export const generateToken = (initData: string, action: Action) => {
   switch (action) {
     case Action.Connect: 
       return `conn${hash}${rand}`
-    case Action.Sign:
+    case Action.SignMsg:
       return `sign${hash}${rand}`;
     default:
       return `send${hash}${rand}`;
@@ -39,8 +39,8 @@ export const buildConnectTokenAndUrl = (initData: string) => {
 };
 
 export const buildSignMsgTokenAndUrl = (initData: string, address: Hex, message: string | Uint8Array) => {
-  const token = generateToken(initData, Action.Sign);
-  const url = buildSignMessageUrl(message, {
+  const token = generateToken(initData, Action.SignMsg);
+  const url = buildSignMessageUrl(message,{
     address,
     joyidAppURL: `${JOYID_APP_URL}?token=${token}`,
     redirectURL: JOYID_MINI_APP_URL,
@@ -49,10 +49,11 @@ export const buildSignMsgTokenAndUrl = (initData: string, address: Hex, message:
 };
 
 export const buildSendTxTokenAndUrl = (initData: string, address: Hex, tx: TransactionRequest) => {
-  const token = generateToken(initData, Action.Send);
+  const token = generateToken(initData, Action.SendTx);
   const url = buildSignTxURL({
     tx,
     signerAddress: address,
+    isSend: true,
     joyidAppURL: `${JOYID_APP_URL}?token=${token}`,
     redirectURL: JOYID_MINI_APP_URL,
   });

@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@joyid/evm':
-    specifier: 0.2.4
-    version: 0.2.4
+    specifier: 0.2.5
+    version: 0.2.5
   '@joyid/wagmi':
     specifier: ^0.1.0
     version: 0.1.0(viem@1.18.8)(wagmi@1.4.5)
@@ -643,6 +643,10 @@ packages:
 
   /@joyid/evm@0.2.4:
     resolution: {integrity: sha512-OayH6uQmnzGdcjiHSCpyf5gs9WSYTyKE1t1qPYxacgz2NiCjwnNDSkc0GKAHp1wGUCscKMjxoXNy/+I0/8Zweg==}
+    dev: false
+
+  /@joyid/evm@0.2.5:
+    resolution: {integrity: sha512-y3AL0xtao0V54fjzf8wdgFQcq0ZZJJ5IdWLzy+DcpWe+4BXAp3YFf3DEK5QkTN+GnC0LWJFSkEzrHN4/dOs5RQ==}
     dev: false
 
   /@joyid/wagmi@0.1.0(viem@1.18.8)(wagmi@1.4.5):

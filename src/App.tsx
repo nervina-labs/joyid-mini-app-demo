@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import {useState} from "react";
 import {Address, Hex, parseEther} from "viem";
 import {useQuery} from "react-query";
 import {disconnect} from "@joyid/evm";
@@ -154,7 +154,7 @@ export default function App() {
       {address ? (
         <>
           <h1 className="text-xl mb-4">Connected: </h1>
-          <h1 className="text-sm mb-4">{address}</h1>
+          <div>{address}</div>
           <div className="my-[30px]">
             <h2 className="text-xl">Sign message: </h2>
             <input
@@ -186,7 +186,7 @@ export default function App() {
               onChange={(e) => setAmount(Number(e.currentTarget.value))}
             />
             <div>
-              <button className="btn btn-primary mt-[10px] w-[60px] capitalize" disabled={amount <= 0 || !toAddress} onClick={onSendTx}>
+              <button className="btn btn-primary mt-[10px] w-[80px] capitalize" disabled={amount <= 0 || !toAddress} onClick={onSendTx}>
                 {sendLoading ? <span className="loading loading-spinner loading-md" /> : "Send"}
               </button>
             </div>

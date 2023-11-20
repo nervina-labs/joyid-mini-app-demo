@@ -11,8 +11,8 @@ p {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  padding: 4rem;
   max-width: 400px;
+  padding: 20px;
 }
 
 
