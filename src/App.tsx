@@ -11,10 +11,10 @@ import {api, ConnectResp, QueryKey, SendResp, SignResp} from "./api";
 const USER_REJECTED = 'rejected'
 
 export default function App() {
-  const [address, setAddress] = useState<Address | null>();
-  const [message, setMessage] = useState<string>('');
-  const [toAddress, setToAddress] = useState<string>("");
-  const [amount, setAmount] = useState<number>(0);
+  const [address, setAddress] = useState<Address | null>(null);
+  const [message, setMessage] = useState<string>("Hello");
+  const [toAddress, setToAddress] = useState<string>("0x8ac36d0e764FF17dcF13b2465e77b4fe125EC2bC");
+  const [amount, setAmount] = useState<number>(0.001);
   const webApp = useWebApp() as WebApp;
 
   const [connectLoading, setConnectLoading] = useState(false);
@@ -150,9 +150,10 @@ export default function App() {
 
 
   return (
-    <div id="app" className="text-sm">
+    <div id="app">
+      <div className="text-2xl sticky font-bold">Mini App wallet connect demo</div>
       {address ? (
-        <>
+        <div className="mb-[20px]">
           <h1 className="text-xl mb-4">Connected: </h1>
           <div>{address}</div>
           <div className="my-[30px]">
@@ -204,10 +205,10 @@ export default function App() {
           </button>
 
           <div className="divider" />
-        </>
+        </div>
       ) : (
-        <button className="btn btn-primary capitalize w-[140px]" onClick={onConnect}>
-          {connectLoading ? <span className="loading loading-spinner loading-md" /> : " Connect JoyID"}
+        <button className="btn btn-primary capitalize w-[180px] mt-[50px]" onClick={onConnect}>
+          {connectLoading ? <span className="loading loading-spinner loading-md" /> : "JoyID Passkey connect"}
         </button>
       )}
     </div>
