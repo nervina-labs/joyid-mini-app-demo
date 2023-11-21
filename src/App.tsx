@@ -153,14 +153,14 @@ export default function App() {
     <div id="app">
       <div className="text-2xl sticky font-bold text-center">Mini App wallet connect demo</div>
       {address ? (
-        <div className="mb-[20px]">
+        <div className="mb-[30px]">
           <h1 className="text-xl mb-4">Connected: </h1>
           <div>{address}</div>
           <div className="my-[30px]">
             <h2 className="text-xl">Sign message: </h2>
             <input
               type="text"
-              placeholder="Type message"
+              placeholder={message ? message : "Type message"}
               className="input input-bordered input-accent w-full max-w-xs mt-[4px]"
               onChange={(e) => setMessage(e.currentTarget.value)}
             />
@@ -176,13 +176,13 @@ export default function App() {
             <h2 className="text-xl">Send transaction: </h2>
             <input
               type="text"
-              placeholder="To address"
+              placeholder={toAddress ? toAddress : "To address"}
               className="input input-bordered input-accent w-full max-w-xs mt-[8px] text-xs"
               onChange={(e) => setToAddress(e.currentTarget.value)}
             />
             <input
               type="number"
-              placeholder="Amount"
+              placeholder={amount > 0 ? amount.toString() : "Amount"}
               className="input input-bordered input-accent w-full max-w-xs mt-[8px]"
               onChange={(e) => setAmount(Number(e.currentTarget.value))}
             />
