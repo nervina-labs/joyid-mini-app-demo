@@ -11,7 +11,7 @@ import {api, ConnectResp, QueryKey, SendResp, SignResp} from "./api";
 const USER_REJECTED = 'rejected'
 
 export default function App() {
-  const [address, setAddress] = useState<Address | null>(null);
+  const [address, setAddress] = useState<Address | null>();
   const [message, setMessage] = useState<string>('');
   const [toAddress, setToAddress] = useState<string>("");
   const [amount, setAmount] = useState<number>(0);
@@ -176,7 +176,7 @@ export default function App() {
             <input
               type="text"
               placeholder="To address"
-              className="input input-bordered input-accent w-full max-w-xs mt-[8px]"
+              className="input input-bordered input-accent w-full max-w-xs mt-[8px] text-xs"
               onChange={(e) => setToAddress(e.currentTarget.value)}
             />
             <input
