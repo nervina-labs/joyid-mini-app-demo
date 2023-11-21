@@ -41,7 +41,7 @@ export default function App() {
       onSuccess(addr) {
         setConnectLoading(false);
         if (addr === USER_REJECTED) {
-          alert("User Rejected");
+          alert("User refuses to connect to JoyID");
         } else {
           setAddress(addr as Hex);
         }
@@ -65,9 +65,9 @@ export default function App() {
       onSuccess(sig) {
         setSignLoading(false);
         if (sig === USER_REJECTED) {
-          alert("User Rejected");
+          alert("User refuses to sign");
         } else { 
-          alert(`Signature: ${sig}`);
+          alert(`Signing successful with result: ${sig}`);
         }
       },
     }
@@ -89,9 +89,9 @@ export default function App() {
       onSuccess(txHash) {
         setSendLoading(false);
         if (txHash === USER_REJECTED) {
-          alert("User Rejected");
+          alert("User refuses to sign and send transaction");
         } else {
-          alert(`Transaction hash: ${txHash}`);
+          alert(`Transaction sent successfully with result: ${txHash}`);
         }
       },
     }
