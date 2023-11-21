@@ -151,7 +151,7 @@ export default function App() {
 
   return (
     <div id="app">
-      <div className="text-2xl sticky font-bold">Mini App wallet connect demo</div>
+      <div className="text-2xl sticky font-bold text-center">Mini App wallet connect demo</div>
       {address ? (
         <div className="mb-[20px]">
           <h1 className="text-xl mb-4">Connected: </h1>
@@ -207,9 +207,11 @@ export default function App() {
           <div className="divider" />
         </div>
       ) : (
-        <button className="btn btn-primary capitalize w-[180px] mt-[50px]" onClick={onConnect}>
-          {connectLoading ? <span className="loading loading-spinner loading-md" /> : "JoyID Passkey connect"}
-        </button>
+        <div className="text-center">
+          <button className="btn btn-primary capitalize w-[200px] mt-[30px]" onClick={onConnect}>
+            {connectLoading ? <span className="loading loading-spinner loading-md" /> : "JoyID Passkey connect"}
+          </button>
+        </div>
       )}
     </div>
   );
