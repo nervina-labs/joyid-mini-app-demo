@@ -1,7 +1,6 @@
 import {useState} from "react";
 import {Address, Hex, parseEther} from "viem";
 import {useQuery} from "react-query";
-import {disconnect} from "@joyid/evm";
 import {useWebApp} from "@vkruglikov/react-telegram-web-app"
 import {WebApp} from "@vkruglikov/react-telegram-web-app/lib/core/twa-types";
 import "./App.css";
@@ -197,7 +196,6 @@ export default function App() {
           <button
             className="btn btn-primary capitalize w-[120px]"
             onClick={() => {
-              disconnect();
               setAddress(null);
             }}
           >

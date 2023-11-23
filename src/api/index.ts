@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios'
-import { BASE_SERVER_URL } from '../env';
+import { CALLBACK_SERVER_URL } from '../env';
 
 export enum QueryKey {
   GetBotMessage = "GetBotMessage",
@@ -12,7 +12,7 @@ interface BotResponse {
 class API {
   private axios: AxiosInstance
 
-  constructor(baseURL = BASE_SERVER_URL) {
+  constructor(baseURL = CALLBACK_SERVER_URL) {
     this.axios = axios.create({
       baseURL,
       timeout: 30 * 1000,
@@ -20,7 +20,7 @@ class API {
   }
 
   public async getTgBotMessage<T>(token: string) {
-    const res = await this.axios.get<BotResponse>( `/api/v1/messages/${ token }` );
+    const res = await this.axios.get<BotResponse>( `/messages/${ token }` );
     return JSON.parse(res.data.message) as T;
   }
 

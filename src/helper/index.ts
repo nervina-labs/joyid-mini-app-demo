@@ -1,6 +1,6 @@
-import { TransactionRequest, buildConnectUrl, buildSignMessageUrl, buildSignTxURL } from "@joyid/evm";
 import { Hex, keccak256 } from "viem"
-import { JOYID_APP_URL, JOYID_MINI_APP_URL } from "../env";
+import { CALLBACK_SERVER_URL, JOYID_APP_URL } from "../env";
+import { TransactionRequest, buildConnectUrl, buildSignMessageUrl, buildSignTxURL } from "@joyid/miniapp";
 
 export enum Action {
   Connect,
@@ -29,21 +29,30 @@ export const generateToken = (initData: string, action: Action) => {
   }
 }
 
+const BASE_INIT = {
+  name: "JoyID Mini App Demo",
+  logo: "https://fav.farm/🆔",
+};
+
 export const buildConnectTokenAndUrl = (initData: string) => {
   const token = generateToken(initData, Action.Connect);
   const url = buildConnectUrl({
-    joyidAppURL: `${JOYID_APP_URL}?token=${token}`,
-    redirectURL: JOYID_MINI_APP_URL,
+    ...BASE_INIT,
+    joyidAppURL: JOYID_APP_URL,
+    miniAppToken: generateToken(initData, Action.Connect),
+    callbackUrl: CALLBACK_SERVER_URL,
   });
   return {token, url}
 };
 
 export const buildSignMsgTokenAndUrl = (initData: string, address: Hex, message: string | Uint8Array) => {
   const token = generateToken(initData, Action.SignMsg);
-  const url = buildSignMessageUrl(message,{
+  const url = buildSignMessageUrl(message, {
+    ...BASE_INIT,
     address,
-    joyidAppURL: `${JOYID_APP_URL}?token=${token}`,
-    redirectURL: JOYID_MINI_APP_URL,
+    joyidAppURL: JOYID_APP_URL,
+    miniAppToken: token,
+    callbackUrl: CALLBACK_SERVER_URL,
   });
   return {token, url};
 };
@@ -51,11 +60,12 @@ export const buildSignMsgTokenAndUrl = (initData: string, address: Hex, message:
 export const buildSendTxTokenAndUrl = (initData: string, address: Hex, tx: TransactionRequest) => {
   const token = generateToken(initData, Action.SendTx);
   const url = buildSignTxURL({
+    ...BASE_INIT,
     tx,
     signerAddress: address,
-    isSend: true,
-    joyidAppURL: `${JOYID_APP_URL}?token=${token}`,
-    redirectURL: JOYID_MINI_APP_URL,
+    joyidAppURL: JOYID_APP_URL,
+    miniAppToken: token,
+    callbackUrl: CALLBACK_SERVER_URL,
   });
   return {token, url};
 };

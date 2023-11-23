@@ -1,7 +1,7 @@
 {
   "name": "joyid-bot",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev:https": "vite dev --host --https --force --port 443",
@@ -13,7 +13,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@joyid/evm": "0.2.5",
+    "@joyid/miniapp": "^0.0.4",
     "@joyid/wagmi": "^0.1.0",
     "@vkruglikov/react-telegram-web-app": "^2.1.5",
     "axios": "^1.6.1",
