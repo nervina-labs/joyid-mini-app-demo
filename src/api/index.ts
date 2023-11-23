@@ -20,7 +20,7 @@ class API {
   }
 
   public async getTgBotMessage<T>(token: string) {
-    const res = await this.axios.get<BotResponse>( `/messages/${ token }` );
+    const res = await this.axios.get<BotResponse>(`/messages/${ token }` );
     return JSON.parse(res.data.message) as T;
   }
 

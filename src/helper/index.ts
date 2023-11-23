@@ -17,7 +17,6 @@ export const generateToken = (initData: string, action: Action) => {
   const data = decodeURI(initData)
   const userId = data.substring(data.indexOf(Colon) + Colon.length, data.indexOf(Comma));
   const hash = keccak256(`0x${Number(userId).toString(16)}` as Hex).substring(2);
-  console.log(hash);
   const rand = [...Array(8)].map(() => Math.floor(Math.random() * 16).toString(16)).join("");
   switch (action) {
     case Action.Connect: 
@@ -39,7 +38,7 @@ export const buildConnectTokenAndUrl = (initData: string) => {
   const url = buildConnectUrl({
     ...BASE_INIT,
     joyidAppURL: JOYID_APP_URL,
-    miniAppToken: generateToken(initData, Action.Connect),
+    miniAppToken: token,
     callbackUrl: CALLBACK_SERVER_URL,
   });
   return {token, url}
