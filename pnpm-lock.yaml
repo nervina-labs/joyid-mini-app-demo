@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@joyid/miniapp':
-    specifier: ^0.0.4
-    version: 0.0.4
+    specifier: ^0.0.5
+    version: 0.0.5
   '@joyid/wagmi':
     specifier: ^0.1.0
     version: 0.1.0(viem@1.18.8)(wagmi@1.4.5)
@@ -645,8 +645,8 @@ packages:
     resolution: {integrity: sha512-OayH6uQmnzGdcjiHSCpyf5gs9WSYTyKE1t1qPYxacgz2NiCjwnNDSkc0GKAHp1wGUCscKMjxoXNy/+I0/8Zweg==}
     dev: false
 
-  /@joyid/miniapp@0.0.4:
-    resolution: {integrity: sha512-C89OcXIs9deEMlFi14Q5WiL0KDkhMflxoazun2YxzwK2ctnmhay0d9o6ctJIae1b20ZQE3FevZy5UgVZeEIWlw==}
+  /@joyid/miniapp@0.0.5:
+    resolution: {integrity: sha512-iYtKBc1uNoqDERPTGxzcv67cPZXuD/ee/AcO8V02OHuZXLCTbGK+hzYthypSsDzUpMWPzXIuGNUTIIn4kmhKSw==}
     dev: false
 
   /@joyid/wagmi@0.1.0(viem@1.18.8)(wagmi@1.4.5):

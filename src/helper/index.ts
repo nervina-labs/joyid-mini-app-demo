@@ -31,13 +31,13 @@ export const generateToken = (initData: string, action: Action) => {
 const BASE_INIT = {
   name: "JoyID Mini App Demo",
   logo: "https://fav.farm/🆔",
+  joyidAppURL: JOYID_APP_URL,
 };
 
 export const buildConnectTokenAndUrl = (initData: string) => {
   const token = generateToken(initData, Action.Connect);
   const url = buildConnectUrl({
     ...BASE_INIT,
-    joyidAppURL: JOYID_APP_URL,
     miniAppToken: token,
     callbackUrl: CALLBACK_SERVER_URL,
   });
@@ -49,7 +49,6 @@ export const buildSignMsgTokenAndUrl = (initData: string, address: Hex, message:
   const url = buildSignMessageUrl(message, {
     ...BASE_INIT,
     address,
-    joyidAppURL: JOYID_APP_URL,
     miniAppToken: token,
     callbackUrl: CALLBACK_SERVER_URL,
   });
@@ -62,7 +61,6 @@ export const buildSendTxTokenAndUrl = (initData: string, address: Hex, tx: Trans
     ...BASE_INIT,
     tx,
     signerAddress: address,
-    joyidAppURL: JOYID_APP_URL,
     miniAppToken: token,
     callbackUrl: CALLBACK_SERVER_URL,
   });
