@@ -4,8 +4,9 @@ import {useQuery} from "react-query";
 import {useWebApp} from "@vkruglikov/react-telegram-web-app"
 import {WebApp} from "@vkruglikov/react-telegram-web-app/lib/core/twa-types";
 import "./App.css";
-import { IS_IPHONE, buildConnectTokenAndUrl, buildSendTxTokenAndUrl, buildSignMsgTokenAndUrl } from "./helper";
+import { buildConnectTokenAndUrl, buildSendTxTokenAndUrl, buildSignMsgTokenAndUrl } from "./helper";
 import {api, ConnectResp, QueryKey, SendResp, SignResp} from "./api";
+import { IS_IPHONE } from "./env/browser";
 
 const USER_REJECTED = 'rejected'
 
