@@ -4,7 +4,7 @@ import {useQuery} from "react-query";
 import {useWebApp} from "@vkruglikov/react-telegram-web-app"
 import {WebApp} from "@vkruglikov/react-telegram-web-app/lib/core/twa-types";
 import "./App.css";
-import { buildConnectTokenAndUrl, buildSendTxTokenAndUrl, buildSignMsgTokenAndUrl } from "./helper";
+import { IS_IPHONE, buildConnectTokenAndUrl, buildSendTxTokenAndUrl, buildSignMsgTokenAndUrl } from "./helper";
 import {api, ConnectResp, QueryKey, SendResp, SignResp} from "./api";
 
 const USER_REJECTED = 'rejected'
@@ -24,6 +24,18 @@ export default function App() {
   const [signToken, setSignToken] = useState("");
   const [sendToken, setSendToken] = useState("");
 
+  const openUrl = (url: string) => {
+    if (IS_IPHONE) {
+      window.open(url, "_blank");
+      return
+    }
+    webApp.openLink && webApp.openLink(url);
+  }
+
+  const showAlert = (message: string) => {
+    webApp.showAlert && webApp.showAlert(message);
+  }
+
   useQuery(
     [QueryKey.GetBotMessage, "connect"],
     async () => {
@@ -40,7 +52,7 @@ export default function App() {
       onSuccess(addr) {
         setConnectLoading(false);
         if (addr === USER_REJECTED) {
-          alert("User refuses to connect to JoyID");
+          showAlert("User refuses to connect to JoyID");
         } else {
           setAddress(addr as Hex);
         }
@@ -64,9 +76,9 @@ export default function App() {
       onSuccess(sig) {
         setSignLoading(false);
         if (sig === USER_REJECTED) {
-          alert("User refuses to sign");
+          showAlert("User refuses to sign");
         } else { 
-          alert(`Signing successful with result: ${sig}`);
+          showAlert(`Signing successful with result: ${sig}`);
         }
       },
     }
@@ -88,9 +100,9 @@ export default function App() {
       onSuccess(txHash) {
         setSendLoading(false);
         if (txHash === USER_REJECTED) {
-          alert("User refuses to sign and send transaction");
+          showAlert("User refuses to sign and send transaction");
         } else {
-          alert(`Transaction sent successfully with result: ${txHash}`);
+          showAlert(`Transaction sent successfully with result: ${txHash}`);
         }
       },
     }
@@ -106,7 +118,7 @@ export default function App() {
       const {token, url} = buildConnectTokenAndUrl(webApp.initData);
       setConnectToken(token);
       setConnectLoading(true);
-      webApp.openLink && webApp.openLink(url);
+      openUrl(url)
     } catch (error) {
       console.log(error);
     }
@@ -121,7 +133,7 @@ export default function App() {
       const {token, url} = buildSignMsgTokenAndUrl(webApp.initData, address!, message);
       setSignToken(token);
       setSignLoading(true);
-      webApp.openLink && webApp.openLink(url);
+      openUrl(url);
     } catch (error) {
       console.log(error);
     }
@@ -141,7 +153,7 @@ export default function App() {
       const {token, url} = buildSendTxTokenAndUrl(webApp.initData, address!, tx);
       setSendToken(token);
       setSendLoading(true);
-      webApp.openLink && webApp.openLink(url);
+      openUrl(url);
     } catch (error) {
       console.log(error);
     } 
