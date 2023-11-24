@@ -6,7 +6,6 @@ import {WebApp} from "@vkruglikov/react-telegram-web-app/lib/core/twa-types";
 import "./App.css";
 import { buildConnectTokenAndUrl, buildSendTxTokenAndUrl, buildSignMsgTokenAndUrl } from "./helper";
 import {api, ConnectResp, QueryKey, SendResp, SignResp} from "./api";
-import { IS_IPHONE } from "./env/browser";
 
 const USER_REJECTED = 'rejected'
 
@@ -26,10 +25,6 @@ export default function App() {
   const [sendToken, setSendToken] = useState("");
 
   const openUrl = (url: string) => {
-    if (IS_IPHONE) {
-      window.open(url, "_blank");
-      return
-    }
     webApp.openLink && webApp.openLink(url);
   }
 
@@ -119,7 +114,7 @@ export default function App() {
       const {token, url} = buildConnectTokenAndUrl(webApp.initData);
       setConnectToken(token);
       setConnectLoading(true);
-      openUrl(url)
+      openUrl(url);
     } catch (error) {
       console.log(error);
     }
@@ -219,7 +214,7 @@ export default function App() {
         </div>
       ) : (
         <div className="text-center">
-          <button className="btn btn-primary capitalize w-[200px] mt-[30px]" onClick={onConnect}>
+          <button className="btn btn-primary capitalize w-[200px] mt-[30px]" onClick={() => onConnect()}>
             {connectLoading ? <span className="loading loading-spinner loading-md" /> : "JoyID Passkey connect"}
           </button>
         </div>
