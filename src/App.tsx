@@ -32,6 +32,10 @@ export default function App() {
     webApp.showAlert && webApp.showAlert(message);
   }
 
+  const onShare = () => {
+    openUrl("https://t.me/share?url=https://app.joy.id&text=JoyID Passkey Wallet");
+  };
+
   useQuery(
     [QueryKey.GetBotMessage, "connect"],
     async () => {
@@ -216,6 +220,9 @@ export default function App() {
         <div className="text-center">
           <button className="btn btn-primary capitalize w-[200px] mt-[30px]" onClick={() => onConnect()}>
             {connectLoading ? <span className="loading loading-spinner loading-md" /> : "JoyID Passkey connect"}
+          </button>
+          <button className="btn btn-primary capitalize w-[200px] mt-[30px]" onClick={() => onShare()}>
+            {connectLoading ? <span className="loading loading-spinner loading-md" /> : "Share Url"}
           </button>
         </div>
       )}
