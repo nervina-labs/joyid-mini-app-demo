@@ -33,7 +33,7 @@ export default function App() {
   }
 
   const onShare = () => {
-    openUrl("https://t.me/share?url=https://app.joy.id&text=JoyID Passkey Wallet");
+    webApp.openTelegramLink && webApp.openTelegramLink("https://t.me/share/url?url=https://app.joy.id&text=JoyID%20Passkey%20Wallet");
   };
 
   useQuery(
