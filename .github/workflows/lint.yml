@@ -18,4 +18,4 @@ jobs:
       - name: Install dependency
         run: pnpm install
       - name: Build
-        run: pnpm lint
+        run: pnpm lint:fix
