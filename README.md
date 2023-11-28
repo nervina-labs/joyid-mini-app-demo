@@ -101,7 +101,7 @@ For example:
 
 ### Message Format
 
-The message format is JSON string which you can put any information into the message and this mini app demo message is defined as follows:
+The message format is JSON string and this mini app demo message is defined as follows:
 
 > You can find this mini app demo message definition [here](./src/api/index.ts)
 
