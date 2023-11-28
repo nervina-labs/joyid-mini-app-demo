@@ -10,6 +10,12 @@ export enum Action {
 
 const Colon = '%3A'
 const Comma = '%2C'
+/**
+ * Generate the unique token for the connection between the mini app and server(whose url is CALLBACK_SERVER_URL), 
+ * and you can implement your own token generation method.
+ * @param action 
+ * @returns 
+ */
 export const generateToken = (initData: string, action: Action) => {
   if (initData.length === 0) {
     throw new Error("Telegram webApp initData cannot be empty");
@@ -34,6 +40,12 @@ const BASE_INIT = {
   joyidAppURL: JOYID_APP_URL,
 };
 
+/**
+ * Build JoyID URL to connect wallet 
+ * and generate the unique token for connection between the mini app and server
+ * @param initData the initData of telegram web app object to generate token{@link https://core.telegram.org/bots/webapps#initializing-mini-apps}
+ * @returns the token and url for connection with JoyID Passkey Wallet
+ */
 export const buildConnectTokenAndUrl = (initData: string) => {
   const token = generateToken(initData, Action.Connect);
   const url = buildConnectUrl({
@@ -44,6 +56,14 @@ export const buildConnectTokenAndUrl = (initData: string) => {
   return {token, url}
 };
 
+/**
+ * Build JoyID URL to sign message with JoyID Passkey Wallet 
+ * and generate the unique token for connection between the mini app and server
+ * @param initData the initData of telegram web app object to generate token{@link https://core.telegram.org/bots/webapps#initializing-mini-apps}
+ * @param address the Ethereum address to sign message
+ * @param message the message to be signed
+ * @returns the token and url for signing with JoyID Passkey Wallet
+ */
 export const buildSignMsgTokenAndUrl = (initData: string, address: Hex, message: string | Uint8Array) => {
   const token = generateToken(initData, Action.SignMsg);
   const url = buildSignMessageUrl(message, {
@@ -55,6 +75,14 @@ export const buildSignMsgTokenAndUrl = (initData: string, address: Hex, message:
   return {token, url};
 };
 
+/**
+ * Build JoyID URL to send Ethereum transaction with JoyID Passkey Wallet 
+ * and generate the unique token for connection between the mini app and server
+ * @param initData the initData of telegram web app object to generate token{@link https://core.telegram.org/bots/webapps#initializing-mini-apps}
+ * @param address the Ethereum address to sign message
+ * @param tx the Ethereum transaction to be signed and sended
+ * @returns the token and url for transaction sending with JoyID Passkey Wallet
+ */
 export const buildSendTxTokenAndUrl = (initData: string, address: Hex, tx: TransactionRequest) => {
   const token = generateToken(initData, Action.SendTx);
   const url = buildSignTxURL({
