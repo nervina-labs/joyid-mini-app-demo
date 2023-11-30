@@ -36,6 +36,11 @@ export interface SignResp {
   signature: string;
 }
 
-export interface SendResp {
+
+export interface SignTxResp {
+  signature: string;
+}
+
+export interface SendTxResp {
   txHash: string;
 }

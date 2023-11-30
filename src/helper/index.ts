@@ -81,9 +81,11 @@ export const buildSignMsgTokenAndUrl = (initData: string, address: Hex, message:
  * @param initData the initData of telegram web app object to generate token{@link https://core.telegram.org/bots/webapps#initializing-mini-apps}
  * @param address the Ethereum address to sign message
  * @param tx the Ethereum transaction to be signed and sended
+ * @param isSend If `false`, the Ethereum transaction will only be signed by JoyID Passkey Wallet 
+ *               and if `true`, the Ethereum transaction will be signed and sended by JoyID Passkey Wallet.
  * @returns the token and url for transaction sending with JoyID Passkey Wallet
  */
-export const buildSendTxTokenAndUrl = (initData: string, address: Hex, tx: TransactionRequest) => {
+export const buildSendTxTokenAndUrl = (initData: string, address: Hex, tx: TransactionRequest, isSend: boolean) => {
   const token = generateToken(initData, Action.SendTx);
   const url = buildSignTxURL({
     ...BASE_INIT,
@@ -91,6 +93,7 @@ export const buildSendTxTokenAndUrl = (initData: string, address: Hex, tx: Trans
     signerAddress: address,
     miniAppToken: token,
     callbackUrl: CALLBACK_SERVER_URL,
+    isSend,
   });
   return {token, url};
 };

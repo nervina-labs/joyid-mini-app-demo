@@ -5,7 +5,7 @@ import {useWebApp} from "@vkruglikov/react-telegram-web-app"
 import {WebApp} from "@vkruglikov/react-telegram-web-app/lib/core/twa-types";
 import "./App.css";
 import { buildConnectTokenAndUrl, buildSendTxTokenAndUrl, buildSignMsgTokenAndUrl } from "./helper";
-import {api, ConnectResp, QueryKey, SendResp, SignResp} from "./api";
+import {api, ConnectResp, QueryKey, SendTxResp, SignResp, SignTxResp} from "./api";
 
 const USER_REJECTED = 'rejected'
 
@@ -23,6 +23,7 @@ export default function App() {
   const [connectToken, setConnectToken] = useState("");
   const [signToken, setSignToken] = useState("");
   const [sendToken, setSendToken] = useState("");
+  const [isSend, setIsSend] = useState(false)
 
   const openUrl = (url: string) => {
     webApp.openLink && webApp.openLink(url);
@@ -81,13 +82,38 @@ export default function App() {
   );
 
   useQuery(
-    [QueryKey.GetBotMessage, "send"],
+    [QueryKey.GetBotMessage, "signTx"],
     async () => {
-      const {txHash} = await api.getTgBotMessage<SendResp>(sendToken);
+      const {signature} = await api.getTgBotMessage<SignTxResp>(sendToken);
+      return signature;
+    },
+    {
+      enabled: !!webApp.initData && sendLoading && !!address && !isSend,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+      refetchInterval: 500,
+      retry: 240,
+      onSuccess(sig) {
+        setSendLoading(false);
+        if (sig === USER_REJECTED) {
+          showAlert("User refuses to sign the transaction");
+        } else {
+          showAlert(`Transaction signed successfully with the signature: ${sig}`);
+        }
+        
+      },
+    }
+  );
+
+  useQuery(
+    [QueryKey.GetBotMessage, "sendTx"],
+    async () => {
+      const {txHash} = await api.getTgBotMessage<SendTxResp>(sendToken);
       return txHash;
     },
     {
-      enabled: !!webApp.initData && sendLoading && !!address,
+      enabled: !!webApp.initData && sendLoading && !!address && isSend,
       refetchOnMount: false,
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
@@ -96,7 +122,7 @@ export default function App() {
       onSuccess(txHash) {
         setSendLoading(false);
         if (txHash === USER_REJECTED) {
-          showAlert("User refuses to sign and send transaction");
+          showAlert("User refuses to sign and send the transaction");
         } else {
           showAlert(`Transaction sent successfully with result: ${txHash}`);
         }
@@ -135,7 +161,7 @@ export default function App() {
     }
   }
 
-  const onSendTx = async () => {
+  const onSendTx = async (isSend: boolean) => {
     if (webApp.initData.length === 0) {
       alert("Please open the web app in Telegram");
       return;
@@ -146,9 +172,10 @@ export default function App() {
         from: address! as Hex,
         value: parseEther(amount.toString()).toString(),
       };
-      const {token, url} = buildSendTxTokenAndUrl(webApp.initData, address!, tx);
+      const {token, url} = buildSendTxTokenAndUrl(webApp.initData, address!, tx, isSend);
       setSendToken(token);
       setSendLoading(true);
+      setIsSend(isSend)
       openUrl(url);
     } catch (error) {
       console.log(error);
@@ -194,7 +221,10 @@ export default function App() {
               onChange={(e) => setAmount(Number(e.currentTarget.value))}
             />
             <div>
-              <button className="btn btn-primary mt-[10px] w-[80px] capitalize" disabled={amount <= 0 || !toAddress} onClick={onSendTx}>
+              <button className="btn btn-primary mt-[10px] w-[80px] capitalize" disabled={amount <= 0 || !toAddress} onClick={() => onSendTx(false)}>
+                {sendLoading ? <span className="loading loading-spinner loading-md" /> : "Sign"}
+              </button>
+              <button className="btn btn-primary mt-[10px] w-[80px] capitalize" disabled={amount <= 0 || !toAddress} onClick={() => onSendTx(true)}>
                 {sendLoading ? <span className="loading loading-spinner loading-md" /> : "Send"}
               </button>
             </div>
