@@ -133,7 +133,7 @@ The message format is JSON string and this mini app demo message is defined as f
 
 - Approve
 ```json
-"message":"{\"signature\":\"0xacf1fadf82f619fc5adc8bf956d0312a99f9915bf5b19e5c5e952485308d741347075a4a5d0c4fa8a8784b8ce79d6d68040e028aa1e7e7c5ee82c52bd1982e831b\"}"
+"message":"{\"signature\":\"0x02f87083aa36a7050b840e4d274a825208948ac36d0e764ff17dcf13b2465e77b4fe125ec2bc87038d7ea4c6800080c080a069d6956ba2d379cbefd02604f0f48628367cd1cf4a7a0408ac58309082d98faea065299a965bb80e8a18a678d83da1f2914aaa43ef235cb331d52c02b94860a54c\"}"
 ```
 
 - Reject
