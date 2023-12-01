@@ -129,6 +129,18 @@ The message format is JSON string and this mini app demo message is defined as f
 "message": "{\"signature\":\"rejected\"}"
 ```
 
+#### Sign transaction
+
+- Approve
+```json
+"message":"{\"signature\":\"0xacf1fadf82f619fc5adc8bf956d0312a99f9915bf5b19e5c5e952485308d741347075a4a5d0c4fa8a8784b8ce79d6d68040e028aa1e7e7c5ee82c52bd1982e831b\"}"
+```
+
+- Reject
+```json
+"message": "{\"signature\":\"rejected\"}"
+```
+
 #### Send transaction
 
 - Approve

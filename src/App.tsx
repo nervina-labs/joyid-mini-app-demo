@@ -4,8 +4,8 @@ import {useQuery} from "react-query";
 import {useWebApp} from "@vkruglikov/react-telegram-web-app"
 import {WebApp} from "@vkruglikov/react-telegram-web-app/lib/core/twa-types";
 import "./App.css";
-import { buildConnectTokenAndUrl, buildSendTxTokenAndUrl, buildSignMsgTokenAndUrl } from "./helper";
-import {api, ConnectResp, QueryKey, SendResp, SignResp} from "./api";
+import { buildConnectTokenAndUrl, buildSendTxTokenAndUrl, buildSignMsgTokenAndUrl, buildSignTxTokenAndUrl } from "./helper";
+import {api, ConnectResp, QueryKey, SendTxResp, SignResp, SignTxResp} from "./api";
 
 const USER_REJECTED = 'rejected'
 
@@ -18,10 +18,12 @@ export default function App() {
 
   const [connectLoading, setConnectLoading] = useState(false);
   const [signLoading, setSignLoading] = useState(false);
+  const [signTxLoading, setSignTxLoading] = useState(false);
   const [sendLoading, setSendLoading] = useState(false);
 
   const [connectToken, setConnectToken] = useState("");
   const [signToken, setSignToken] = useState("");
+  const [signTxToken, setSignTxToken] = useState("")
   const [sendToken, setSendToken] = useState("");
 
   const openUrl = (url: string) => {
@@ -81,9 +83,42 @@ export default function App() {
   );
 
   useQuery(
-    [QueryKey.GetBotMessage, "send"],
+    [QueryKey.GetBotMessage, "signTx"],
     async () => {
-      const {txHash} = await api.getTgBotMessage<SendResp>(sendToken);
+      const {signature} = await api.getTgBotMessage<SignTxResp>(signTxToken);
+      return signature;
+    },
+    {
+      enabled: !!webApp.initData && signTxLoading && !!address,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+      refetchInterval: 500,
+      retry: 240,
+      async onSuccess(sig) {
+        setSignTxLoading(false);
+        if (sig === USER_REJECTED) {
+          showAlert("User refuses to sign the transaction");
+        } else {
+          // You can call the RPC eth_sendRawTransaction with the signature
+          // const transport = http(SEPOLIA_RPC);
+          // const client = createPublicClient({
+          //   chain: sepolia,
+          //   transport,
+          // });
+          // const hash = await client.sendRawTransaction({
+          //   serializedTransaction: signature as Hex,
+          // });
+          alert(`Transaction signed successfully with the signature: ${sig}`);
+        }
+      },
+    }
+  );
+
+  useQuery(
+    [QueryKey.GetBotMessage, "sendTx"],
+    async () => {
+      const {txHash} = await api.getTgBotMessage<SendTxResp>(sendToken);
       return txHash;
     },
     {
@@ -96,14 +131,13 @@ export default function App() {
       onSuccess(txHash) {
         setSendLoading(false);
         if (txHash === USER_REJECTED) {
-          showAlert("User refuses to sign and send transaction");
+          showAlert("User refuses to sign and send the transaction");
         } else {
           showAlert(`Transaction sent successfully with result: ${txHash}`);
         }
       },
     }
   );
-  
 
   const onConnect = () => {
     if (webApp.initData.length === 0) {
@@ -135,6 +169,27 @@ export default function App() {
     }
   }
 
+  const onSignTx = async () => {
+    if (webApp.initData.length === 0) {
+      alert("Please open the web app in Telegram");
+      return;
+    }
+    try {
+      const tx = {
+        to: toAddress as Hex,
+        from: address! as Hex,
+        value: parseEther(amount.toString()).toString(),
+      };
+      const {token, url} = buildSignTxTokenAndUrl(webApp.initData, address!, tx);
+      setSignTxToken(token);
+      setSignTxLoading(true);
+      openUrl(url);
+    } catch (error) {
+      console.log(error);
+    } 
+  };
+
+
   const onSendTx = async () => {
     if (webApp.initData.length === 0) {
       alert("Please open the web app in Telegram");
@@ -152,9 +207,8 @@ export default function App() {
       openUrl(url);
     } catch (error) {
       console.log(error);
-    } 
+    }
   };
-
 
   return (
     <div id="app">
@@ -172,7 +226,7 @@ export default function App() {
               onChange={(e) => setMessage(e.currentTarget.value)}
             />
             <div>
-              <button className="btn btn-primary mt-[10px] w-[120px] capitalize" disabled={!message} onClick={onSignMessage}>
+              <button className="btn btn-primary mt-[10px] w-[120px] capitalize" disabled={!message || signLoading} onClick={onSignMessage}>
                 {signLoading ? <span className="loading loading-spinner loading-md" /> : "Sign"}
               </button>
             </div>
@@ -180,7 +234,7 @@ export default function App() {
           </div>
 
           <div className="my-[30px]">
-            <h2 className="text-xl">Send transaction: </h2>
+            <h2 className="text-xl">Sign and Send transaction: </h2>
             <input
               type="text"
               placeholder={toAddress ? toAddress : "To address"}
@@ -193,8 +247,19 @@ export default function App() {
               className="input input-bordered input-accent w-full max-w-xs mt-[8px]"
               onChange={(e) => setAmount(Number(e.currentTarget.value))}
             />
-            <div>
-              <button className="btn btn-primary mt-[10px] w-[80px] capitalize" disabled={amount <= 0 || !toAddress} onClick={onSendTx}>
+            <div className="mt-[10px]">
+              <button
+                className="btn btn-primary w-[120px] capitalize block"
+                disabled={amount <= 0 || !toAddress || signTxLoading}
+                onClick={onSignTx}
+              >
+                {signTxLoading ? <span className="loading loading-spinner loading-md" /> : "Sign"}
+              </button>
+              <button
+                className="btn btn-primary w-[120px] capitalize mt-[12px] block"
+                disabled={amount <= 0 || !toAddress || sendLoading}
+                onClick={onSendTx}
+              >
                 {sendLoading ? <span className="loading loading-spinner loading-md" /> : "Send"}
               </button>
             </div>
@@ -203,18 +268,15 @@ export default function App() {
 
           <button
             className="btn btn-primary capitalize w-[120px]"
-            onClick={() => {
-              setAddress(null);
-            }}
+            onClick={() => setAddress(null)}
           >
             Disconnect
           </button>
-
           <div className="divider" />
         </div>
       ) : (
         <div className="text-center">
-          <button className="btn btn-primary capitalize w-[200px] mt-[30px]" onClick={() => onConnect()}>
+          <button className="btn btn-primary capitalize w-[200px] mt-[30px]" disabled={connectLoading} onClick={onConnect}>
             {connectLoading ? <span className="loading loading-spinner loading-md" /> : "JoyID Passkey connect"}
           </button>
         </div>

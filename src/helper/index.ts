@@ -2,6 +2,9 @@ import { Hex, keccak256 } from "viem"
 import { CALLBACK_SERVER_URL, JOYID_APP_URL } from "../env";
 import { TransactionRequest, buildConnectUrl, buildSignMessageUrl, buildSignTxURL } from "@joyid/miniapp";
 
+export const SEPOLIA_RPC = "https://rpc.sepolia.org";
+export const SEPOLIA_CHAIN_ID = 11155111;
+
 export enum Action {
   Connect,
   SignMsg,
@@ -83,6 +86,34 @@ export const buildSignMsgTokenAndUrl = (initData: string, address: Hex, message:
  * @param tx the Ethereum transaction to be signed and sended
  * @returns the token and url for transaction sending with JoyID Passkey Wallet
  */
+export const buildSignTxTokenAndUrl = (initData: string, address: Hex, tx: TransactionRequest) => {
+  const token = generateToken(initData, Action.SendTx);
+  const url = buildSignTxURL({
+    ...BASE_INIT,
+    tx,
+    signerAddress: address,
+    miniAppToken: token,
+    callbackUrl: CALLBACK_SERVER_URL,
+    isSend: false,
+    // the network and rpcURL can be empty and if empty, the chain will be the JoyID default chain
+    network: {
+      name: "Sepolia",
+      chainId: SEPOLIA_CHAIN_ID,
+    },
+    rpcURL: SEPOLIA_RPC,
+  });
+  return {token, url};
+};
+
+
+/**
+ * Build JoyID URL to send Ethereum transaction with JoyID Passkey Wallet 
+ * and generate the unique token for connection between the mini app and server
+ * @param initData the initData of telegram web app object to generate token{@link https://core.telegram.org/bots/webapps#initializing-mini-apps}
+ * @param address the Ethereum address to sign message
+ * @param tx the Ethereum transaction to be signed and sended
+ * @returns the token and url for transaction sending with JoyID Passkey Wallet
+ */
 export const buildSendTxTokenAndUrl = (initData: string, address: Hex, tx: TransactionRequest) => {
   const token = generateToken(initData, Action.SendTx);
   const url = buildSignTxURL({
@@ -91,7 +122,13 @@ export const buildSendTxTokenAndUrl = (initData: string, address: Hex, tx: Trans
     signerAddress: address,
     miniAppToken: token,
     callbackUrl: CALLBACK_SERVER_URL,
+    isSend: true,
+    // the network and rpcURL can be empty and if empty, the chain will be the JoyID default chain
+    // network: {
+    //   name: "Sepolia",
+    //   chainId: SEPOLIA_CHAIN_ID,
+    // },
+    // rpcURL: SEPOLIA_RPC,
   });
   return {token, url};
 };
-
