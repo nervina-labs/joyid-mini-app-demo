@@ -40,6 +40,7 @@ You can find the functions as blow to build JoyID URL and the annotations will b
 
 - [`buildConnectTokenAndUrl`](./src/helper/index.ts)
 - [`buildSignMsgTokenAndUrl`](./src/helper/index.ts)
+- [`buildSignTxTokenAndUrl`](./src/helper/index.ts)
 - [`buildSendTxTokenAndUrl`](./src/helper/index.ts)
 
 ### Build Your Own Server
