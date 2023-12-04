@@ -37,6 +37,22 @@ export default function App() {
   };
 
   useQuery(
+    [QueryKey.RequestAccess, "writeAccessRequested"],
+    () => {
+      (webApp as any).requestWriteAccess && (webApp as any).requestWriteAccess((ret: any) => {
+        console.log(JSON.stringify(ret))
+      });
+    },
+    {
+      enabled: true,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+      retry: 0,
+    }
+  );
+
+  useQuery(
     [QueryKey.GetBotMessage, "connect"],
     async () => {
       const {address} = await api.getTgBotMessage<ConnectResp>(connectToken);
