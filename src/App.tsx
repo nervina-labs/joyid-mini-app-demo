@@ -211,6 +211,7 @@ export default function App() {
   };
 
   useEffect(() => {
+    console.log(webApp.initData);
     (webApp as any).requestWriteAccess && (webApp as any).requestWriteAccess((ret: any) => {console.log(ret)});
   }, [])
 
