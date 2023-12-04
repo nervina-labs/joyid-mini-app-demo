@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {Address, Hex, parseEther} from "viem";
 import {useQuery} from "react-query";
 import {useWebApp} from "@vkruglikov/react-telegram-web-app"
@@ -75,7 +75,7 @@ export default function App() {
         setSignLoading(false);
         if (sig === USER_REJECTED) {
           showAlert("User refuses to sign");
-        } else { 
+        } else {
           showAlert(`Signing successful with result: ${sig}`);
         }
       },
@@ -142,7 +142,7 @@ export default function App() {
   const onConnect = () => {
     if (webApp.initData.length === 0) {
       alert('Please open the web app in Telegram')
-      return 
+      return
     }
     try {
       const {token, url} = buildConnectTokenAndUrl(webApp.initData);
@@ -186,7 +186,7 @@ export default function App() {
       openUrl(url);
     } catch (error) {
       console.log(error);
-    } 
+    }
   };
 
 
@@ -209,6 +209,11 @@ export default function App() {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    console.log(webApp.initData);
+    (webApp as any).requestWriteAccess && (webApp as any).requestWriteAccess((ret: any) => {console.log(ret)});
+  }, [])
 
   return (
     <div id="app">
