@@ -211,10 +211,8 @@ export default function App() {
   };
 
   useEffect(() => {
-    console.log(webApp.version)
-    const win: any = window;
-    win.Telegram.WebApp.requestWriteAccess();
-  }, []);
+    (webApp as any).requestWriteAccess && (webApp as any).requestWriteAccess((ret: any) => {console.log(ret)});
+  }, [])
 
   return (
     <div id="app">
