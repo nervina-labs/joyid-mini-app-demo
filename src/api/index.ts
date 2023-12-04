@@ -3,6 +3,7 @@ import { CALLBACK_SERVER_URL } from '../env';
 
 export enum QueryKey {
   GetBotMessage = "GetBotMessage",
+  RequestAccess = "RequestAccess",
 }
 
 interface BotResponse {
