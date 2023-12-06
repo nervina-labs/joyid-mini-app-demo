@@ -1,16 +1,18 @@
 import {useState} from "react";
-import {Address, Hex, parseEther} from "viem";
+import {Hex, parseEther} from "viem";
 import {useQuery} from "react-query";
 import {useWebApp} from "@vkruglikov/react-telegram-web-app"
 import {WebApp} from "@vkruglikov/react-telegram-web-app/lib/core/twa-types";
 import "./App.css";
 import { buildConnectTokenAndUrl, buildSendTxTokenAndUrl, buildSignMsgTokenAndUrl, buildSignTxTokenAndUrl } from "./helper";
 import {api, ConnectResp, QueryKey, SendTxResp, SignResp, SignTxResp} from "./api";
+import { useCurrentAddress, useUpdateAddress } from "./hooks/useAccount";
 
 const USER_REJECTED = 'rejected'
 
 export default function App() {
-  const [address, setAddress] = useState<Address | null>(null);
+  const updateAddress = useUpdateAddress();
+  const address = useCurrentAddress();
   const [message, setMessage] = useState<string>("Hello");
   const [toAddress, setToAddress] = useState<string>("0x8ac36d0e764FF17dcF13b2465e77b4fe125EC2bC");
   const [amount, setAmount] = useState<number>(0.001);
@@ -52,7 +54,7 @@ export default function App() {
         if (addr === USER_REJECTED) {
           showAlert("User refuses to connect to JoyID");
         } else {
-          setAddress(addr as Hex);
+          updateAddress(addr as Hex);
         }
       },
     }
@@ -141,8 +143,8 @@ export default function App() {
 
   const onConnect = () => {
     if (webApp.initData.length === 0) {
-      alert('Please open the web app in Telegram')
-      return 
+      alert("Please open the web app in Telegram");
+      return;
     }
     try {
       const {token, url} = buildConnectTokenAndUrl(webApp.initData);
@@ -268,7 +270,7 @@ export default function App() {
 
           <button
             className="btn btn-primary capitalize w-[120px]"
-            onClick={() => setAddress(null)}
+            onClick={() => updateAddress(null)}
           >
             Disconnect
           </button>

@@ -21,6 +21,7 @@
     "react-dom": "^18.2.0",
     "react-query": "^3.39.3",
     "viem": "1.18.8",
+    "jotai": "^1.8.6",
     "wagmi": "^1.4.5"
   },
   "devDependencies": {
