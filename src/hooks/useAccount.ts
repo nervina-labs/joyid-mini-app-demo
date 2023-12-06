@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 import { useAtomValue } from 'jotai'
 import { atomWithStorage, useUpdateAtom } from 'jotai/utils'
 import { Hex } from 'viem';
