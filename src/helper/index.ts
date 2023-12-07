@@ -100,7 +100,8 @@ export const buildSignTxTokenAndUrl = (initData: string, address: Hex, tx: Trans
       name: "Sepolia",
       chainId: SEPOLIA_CHAIN_ID,
     },
-    rpcURL: SEPOLIA_RPC,
+    // The Sepolia testnet has been supported by JoyID wallet, so the rpcURL is optional
+    // rpcURL: SEPOLIA_RPC,
   });
   return {token, url};
 };
