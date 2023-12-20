@@ -1,6 +1,8 @@
 import axios, { AxiosInstance } from 'axios'
 import { CALLBACK_SERVER_URL } from '../env';
 
+export const USER_REJECTED = "rejected";
+
 export enum QueryKey {
   GetBotMessage = "GetBotMessage",
   RequestAccess = "RequestAccess",

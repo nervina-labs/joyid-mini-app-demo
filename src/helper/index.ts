@@ -1,6 +1,7 @@
 import { Hex, keccak256 } from "viem"
 import { CALLBACK_SERVER_URL, JOYID_APP_URL } from "../env";
-import { TransactionRequest, buildConnectUrl, buildSignMessageUrl, buildSignTxURL } from "@joyid/miniapp";
+import {TypedDataDefinition} from "viem";
+import { TransactionRequest, buildConnectUrl, buildSignMessageUrl, buildSignTxURL, buildSignTypedDataUrl } from "@joyid/miniapp";
 
 export const SEPOLIA_RPC = "https://rpc.sepolia.org";
 export const SEPOLIA_CHAIN_ID = 11155111;
@@ -133,3 +134,16 @@ export const buildSendTxTokenAndUrl = (initData: string, address: Hex, tx: Trans
   });
   return {token, url};
 };
+
+export const buildSignTypedDataTokenAndUrl = (initData: string, address: Hex, typedData: TypedDataDefinition) => {
+  const token = generateToken(initData, Action.SignMsg);
+  const url = buildSignTypedDataUrl({
+    ...BASE_INIT,
+    signerAddress: address,
+    miniAppToken: token,
+    typedData,
+    callbackUrl: CALLBACK_SERVER_URL,
+  });
+  return {token, url};
+};
+

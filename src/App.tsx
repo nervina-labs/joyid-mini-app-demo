@@ -1,11 +1,13 @@
-import {useState} from "react";
-import {Hex, parseEther} from "viem";
-import {useQuery} from "react-query";
-import {useWebApp} from "@vkruglikov/react-telegram-web-app"
-import {WebApp} from "@vkruglikov/react-telegram-web-app/lib/core/twa-types";
+import { useState } from "react";
+import { Hex, parseEther } from "viem";
+import { useQuery } from "react-query";
+import { useWebApp } from "@vkruglikov/react-telegram-web-app"
+import { WebApp } from "@vkruglikov/react-telegram-web-app/lib/core/twa-types";
 import "./App.css";
 import { buildConnectTokenAndUrl, buildSendTxTokenAndUrl, buildSignMsgTokenAndUrl, buildSignTxTokenAndUrl } from "./helper";
-import {api, ConnectResp, QueryKey, SendTxResp, SignResp, SignTxResp} from "./api";
+import { api, ConnectResp, QueryKey, SendTxResp, SignResp, SignTxResp} from "./api";
+import { JoySigner } from "./evm-aa/signer";
+import { getAAProvider } from "./evm-aa/provider";
 import { useCurrentAddress, useUpdateAddress } from "./hooks/useAccount";
 
 const USER_REJECTED = 'rejected'
@@ -35,26 +37,6 @@ export default function App() {
   const showAlert = (message: string) => {
     webApp.showAlert && webApp.showAlert(message);
   }
-
-  const onShare = () => {
-    webApp.openTelegramLink && webApp.openTelegramLink("https://t.me/share/url?url=https://app.joy.id&text=JoyID%20Passkey%20Wallet");
-  };
-
-  useQuery(
-    [QueryKey.RequestAccess, "writeAccessRequested"],
-    () => {
-      (webApp as any).requestWriteAccess && (webApp as any).requestWriteAccess((ret: any) => {
-        console.log(JSON.stringify(ret))
-      });
-    },
-    {
-      enabled: true,
-      refetchOnMount: false,
-      refetchOnReconnect: false,
-      refetchOnWindowFocus: false,
-      retry: 0,
-    }
-  );
 
   useQuery(
     [QueryKey.GetBotMessage, "connect"],
@@ -232,6 +214,13 @@ export default function App() {
     }
   };
 
+  const onCreate = async () => {
+    const signer = new JoySigner(webApp, address)
+    const provider = await getAAProvider(signer)
+    const aaAddress = provider.account?.getAddress()
+    console.log("aaAddress", aaAddress);
+  }
+
   return (
     <div id="app">
       <div className="text-2xl sticky font-bold text-center">Mini App wallet connect demo</div>
@@ -288,6 +277,11 @@ export default function App() {
             <div className="divider" />
           </div>
 
+          <button className="btn btn-primary capitalize w-[200px] mt-[30px]" onClick={onCreate}>
+            Create AA
+          </button>
+
+          <div className="divider" />
           <button
             className="btn btn-primary capitalize w-[120px]"
             onClick={() => updateAddress(null)}
@@ -300,9 +294,6 @@ export default function App() {
         <div className="text-center">
           <button className="btn btn-primary capitalize w-[200px] mt-[30px]" disabled={connectLoading} onClick={onConnect}>
             {connectLoading ? <span className="loading loading-spinner loading-md" /> : "JoyID Passkey connect"}
-          </button>
-          <button className="btn btn-primary capitalize w-[200px] mt-[30px]" onClick={() => onShare()}>
-            {connectLoading ? <span className="loading loading-spinner loading-md" /> : "Share Url"}
           </button>
         </div>
       )}
