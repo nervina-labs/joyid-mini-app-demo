@@ -215,7 +215,7 @@ export default function App() {
   };
 
   const onCreate = async () => {
-    const signer = new JoySigner(webApp, address)
+    const signer = new JoySigner(webApp, address as Hex)
     const provider = await getAAProvider(signer)
     const aaAddress = provider.account?.getAddress()
     console.log("aaAddress", aaAddress);

@@ -1,18 +1,21 @@
 import { SignTypedDataParams, SmartAccountSigner } from "@alchemy/aa-core";
-import {type HDAccount, type Hex, TypedDataDefinition} from "viem";
+import { HDAccount, type Hex, TypedDataDefinition, hexToBytes } from "viem";
+import {HDKey, hdKeyToAccount} from "viem/accounts";
 import { WebApp } from "@vkruglikov/react-telegram-web-app/lib/core/twa-types";
-import { buildConnectTokenAndUrl, buildSignMsgTokenAndUrl } from "../helper";
+import { buildConnectTokenAndUrl, buildSignMsgTokenAndUrl, buildSignTypedDataTokenAndUrl } from "../helper";
 import { ConnectResp, SignResp, USER_REJECTED, api } from "../api";
 
 export class JoySigner implements SmartAccountSigner<HDAccount> {
   signerType = "local";
-  inner: HDAccount;
-  address: Hex
+  address: Hex;
   webApp: WebApp | undefined;
+  
+  // useless
+  inner: HDAccount = hdKeyToAccount(HDKey.fromMasterSeed(hexToBytes("0x0000000000000000000000000000000000000000000000000000000000000000")));
 
   constructor(webApp: WebApp, address: Hex) {
     this.webApp = webApp;
-    this.address = address
+    this.address = address;
   }
 
   openUrl = (url: string) => {
@@ -22,7 +25,7 @@ export class JoySigner implements SmartAccountSigner<HDAccount> {
   };
 
   readonly getAddress: () => Promise<Hex> = async () => {
-    const promise = new Promise((resolve, reject) => {
+    const promise = new Promise<Hex>((resolve, reject) => {
       if (!this.webApp) {
         reject("Telegram WebApp cannot be empty");
       } else {
@@ -34,7 +37,7 @@ export class JoySigner implements SmartAccountSigner<HDAccount> {
               if (address === USER_REJECTED) {
                 reject("User refuses to get address from JoyID");
               } else {
-                resolve(address);
+                resolve(address as Hex);
               }
               clearInterval(interval);
             });
@@ -48,7 +51,7 @@ export class JoySigner implements SmartAccountSigner<HDAccount> {
   };
 
   readonly signMessage: (msg: string | Uint8Array) => Promise<Hex> = (msg) => {
-    const promise = new Promise((resolve, reject) => {
+    const promise = new Promise<Hex>((resolve, reject) => {
       if (!this.webApp) {
         reject("Telegram WebApp cannot be empty");
       } else {
@@ -60,7 +63,7 @@ export class JoySigner implements SmartAccountSigner<HDAccount> {
               if (signature === USER_REJECTED) {
                 reject("User refuses to sign message from JoyID");
               } else {
-                resolve(signature);
+                resolve(signature as Hex);
               }
               clearInterval(interval);
             });
@@ -75,25 +78,23 @@ export class JoySigner implements SmartAccountSigner<HDAccount> {
 
   readonly signTypedData = (params: SignTypedDataParams) => {
     const typedData = params as TypedDataDefinition;
-    const promise = new Promise((resolve, reject) => {
+    const promise = new Promise<Hex>((resolve, reject) => {
       if (!this.webApp) {
         reject("Telegram WebApp cannot be empty");
       } else {
         try {
-          const {token, url} = buildSignMsgTokenAndUrl(this.webApp.initData, this.address, typedData);
+          const {token, url} = buildSignTypedDataTokenAndUrl(this.webApp.initData, this.address, typedData);
           this.openUrl(url);
           const interval = setInterval(() => {
-            api
-              .getTgBotMessage<SignResp>(token)
-              .then(({signature}) => {
-                if (signature === USER_REJECTED) {
-                  reject("User refuses to sign typed data from JoyID");
-                } else {
-                  resolve(signature);
-                }
-                clearInterval(interval);
-              })
-          }, 500)
+            api.getTgBotMessage<SignResp>(token).then(({signature}) => {
+              if (signature === USER_REJECTED) {
+                reject("User refuses to sign typed data from JoyID");
+              } else {
+                resolve(signature as Hex);
+              }
+              clearInterval(interval);
+            });
+          }, 500);
         } catch (error) {
           console.error(error);
         }
