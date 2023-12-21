@@ -1,4 +1,4 @@
-import { atom, useAtomValue, useSetAtom } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
 import { Hex } from 'viem';
 
@@ -7,6 +7,6 @@ export const useCurrentAddress = () => useAtomValue(addressAtom);
 export const useUpdateAddress = () => useSetAtom(addressAtom);
 
 
-const aaAddressAtom = atom<Hex | undefined>(undefined);
+const aaAddressAtom = atomWithStorage<Hex | undefined>("joyid:aa-address", undefined);
 export const useAaAddress = () => useAtomValue(aaAddressAtom);
 export const useUpdateAaAddress = () => useSetAtom(aaAddressAtom);

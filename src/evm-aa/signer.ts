@@ -6,7 +6,6 @@ import { ConnectResp, SignResp, USER_REJECTED, api } from "../api";
 
 export class JoySigner implements SmartAccountSigner {
   address: Hex;
-  aaAddress: Hex | undefined;
   webApp: WebApp | undefined;
 
   signerType = "local";
@@ -26,14 +25,10 @@ export class JoySigner implements SmartAccountSigner {
     }
   }
 
-  setAaAddress = (aaAddress: Hex) => {
-    this.aaAddress = aaAddress
-  }
-
   readonly getAddress: () => Promise<Hex> = async () => {
-    if (this.aaAddress) {
+    if (this.address) {
       return new Promise((resolve) => {
-        resolve(this.aaAddress as Hex)
+        resolve(this.address as Hex);
       })
     }
     const promise = new Promise<Hex>((resolve, reject) => {

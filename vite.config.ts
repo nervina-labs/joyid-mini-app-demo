@@ -2,6 +2,7 @@ import {defineConfig} from "vite";
 import react from "@vitejs/plugin-react";
 import mkcert from "vite-plugin-mkcert";
 import {NodeGlobalsPolyfillPlugin} from "@esbuild-plugins/node-globals-polyfill";
+import rollupNodePolyFill from "rollup-plugin-node-polyfills";
 import {esbuildCommonjs, viteCommonjs} from "@originjs/vite-plugin-commonjs";
 
 const plugins: any[] = [
@@ -40,6 +41,13 @@ export default defineConfig(({mode}) => {
     },
     build: {
       assetsInlineLimit: 5000,
+      rollupOptions: {
+        plugins: [
+          // Enable rollup polyfills plugin
+          // used during production bundling
+          rollupNodePolyFill(),
+        ],
+      },
     },
     optimizeDeps: {
       esbuildOptions: {

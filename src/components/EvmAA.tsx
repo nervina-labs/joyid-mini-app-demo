@@ -6,6 +6,7 @@ import { useAaAddress, useCurrentAddress, useUpdateAaAddress } from "../hooks/us
 import { JoySigner } from "../evm-aa/signer";
 import { getAAProvider } from "../evm-aa/provider";
 import { ECDSAProvider } from "@zerodev/sdk";
+import { useEffect } from "react";
 
 // The NFT contract we will be interacting with
 const contractAddress = '0x34bE7f35132E97915633BC1fc020364EA5134863'
@@ -26,15 +27,17 @@ export const EvmAA = () => {
   const [signLoading, setSignLoading] = useState(false);
   const [mintLoading, setMintLoading] = useState(false);
 
+  useEffect(() => {
+    const init = async () => {
+      const signer = new JoySigner(webApp, address as Hex);
+      setProvider(await getAAProvider(signer));
+    };
+    init();
+  }, [address, webApp]);
+
   const onCreate = async () => {
     setCreateLoading(true);
-    const signer = new JoySigner(webApp, address as Hex);
-    const aaProvider = await getAAProvider(signer);
-    setProvider(aaProvider);
-    const aaAddr = await aaProvider.account?.getAddress();
-    if (aaAddr) {
-      signer.setAaAddress(aaAddr);
-    }
+    const aaAddr = await provider?.account?.getAddress();
     updateAaAddress(aaAddr);
     setCreateLoading(false);
   };
