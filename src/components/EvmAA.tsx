@@ -33,7 +33,7 @@ export const EvmAA = () => {
       setProvider(await getAAProvider(signer));
     };
     init();
-  }, [address, webApp]);
+  }, [address, webApp]); 
 
   const onCreate = async () => {
     setCreateLoading(true);

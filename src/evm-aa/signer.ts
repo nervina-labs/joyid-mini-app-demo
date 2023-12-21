@@ -47,7 +47,7 @@ export class JoySigner implements SmartAccountSigner {
               }
               clearInterval(interval);
             });
-          }, 500);
+          }, 1000);
         } catch (error) {
           console.log(error);
         }
@@ -73,7 +73,7 @@ export class JoySigner implements SmartAccountSigner {
               }
               clearInterval(interval);
             });
-          }, 500);
+          }, 1000);
         } catch (error) {
           console.error(error);
         }
@@ -100,7 +100,7 @@ export class JoySigner implements SmartAccountSigner {
               }
               clearInterval(interval);
             });
-          }, 500);
+          }, 1000);
         } catch (error) {
           console.error(error);
         }
