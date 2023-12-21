@@ -47,7 +47,7 @@ export class JoySigner implements SmartAccountSigner {
               }
               clearInterval(interval);
             });
-          }, 2000);
+          }, 500);
         } catch (error) {
           console.log(error);
         }
@@ -63,7 +63,6 @@ export class JoySigner implements SmartAccountSigner {
       } else {
         try {
           const {token, url} = buildSignMsgTokenAndUrl(this.webApp.initData, this.address, msg);
-          console.log("sign message url", url);
           this.openUrl(url);
           const interval = setInterval(() => {
             api.getTgBotMessage<SignResp>(token).then(({signature}) => {
@@ -74,7 +73,7 @@ export class JoySigner implements SmartAccountSigner {
               }
               clearInterval(interval);
             });
-          }, 2000);
+          }, 500);
         } catch (error) {
           console.error(error);
         }
@@ -101,7 +100,7 @@ export class JoySigner implements SmartAccountSigner {
               }
               clearInterval(interval);
             });
-          }, 2000);
+          }, 500);
         } catch (error) {
           console.error(error);
         }
