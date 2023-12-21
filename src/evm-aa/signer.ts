@@ -1,17 +1,17 @@
 import { SignTypedDataParams, SmartAccountSigner } from "@alchemy/aa-core";
-import { HDAccount, type Hex, TypedDataDefinition, hexToBytes } from "viem";
-import {HDKey, hdKeyToAccount} from "viem/accounts";
+import { type Hex, TypedDataDefinition } from "viem";
 import { WebApp } from "@vkruglikov/react-telegram-web-app/lib/core/twa-types";
 import { buildConnectTokenAndUrl, buildSignMsgTokenAndUrl, buildSignTypedDataTokenAndUrl } from "../helper";
 import { ConnectResp, SignResp, USER_REJECTED, api } from "../api";
 
-export class JoySigner implements SmartAccountSigner<HDAccount> {
-  signerType = "local";
+export class JoySigner implements SmartAccountSigner {
   address: Hex;
+  aaAddress: Hex | undefined;
   webApp: WebApp | undefined;
-  
+
+  signerType = "local";
   // useless
-  inner: HDAccount = hdKeyToAccount(HDKey.fromMasterSeed(hexToBytes("0x0000000000000000000000000000000000000000000000000000000000000000")));
+  inner = 'useless';
 
   constructor(webApp: WebApp, address: Hex) {
     this.webApp = webApp;
@@ -19,18 +19,29 @@ export class JoySigner implements SmartAccountSigner<HDAccount> {
   }
 
   openUrl = (url: string) => {
-    if (this.webApp) {
-      this.webApp.openLink && this.webApp.openLink(url);
+    if (this.webApp?.openLink) {
+      this.webApp.openLink(url);
+    } else {
+      window.open(url, '_blank');
     }
-  };
+  }
+
+  setAaAddress = (aaAddress: Hex) => {
+    this.aaAddress = aaAddress
+  }
 
   readonly getAddress: () => Promise<Hex> = async () => {
+    if (this.aaAddress) {
+      return new Promise((resolve) => {
+        resolve(this.aaAddress as Hex)
+      })
+    }
     const promise = new Promise<Hex>((resolve, reject) => {
       if (!this.webApp) {
         reject("Telegram WebApp cannot be empty");
       } else {
         try {
-          const {token, url} = buildConnectTokenAndUrl(this.webApp.initData);
+          const {token, url} = buildConnectTokenAndUrl(this.webApp.initData, true);
           this.openUrl(url);
           const interval = setInterval(() => {
             api.getTgBotMessage<ConnectResp>(token).then(({address}) => {
@@ -41,7 +52,7 @@ export class JoySigner implements SmartAccountSigner<HDAccount> {
               }
               clearInterval(interval);
             });
-          }, 500);
+          }, 2000);
         } catch (error) {
           console.log(error);
         }
@@ -57,6 +68,7 @@ export class JoySigner implements SmartAccountSigner<HDAccount> {
       } else {
         try {
           const {token, url} = buildSignMsgTokenAndUrl(this.webApp.initData, this.address, msg);
+          console.log("sign message url", url);
           this.openUrl(url);
           const interval = setInterval(() => {
             api.getTgBotMessage<SignResp>(token).then(({signature}) => {
@@ -67,7 +79,7 @@ export class JoySigner implements SmartAccountSigner<HDAccount> {
               }
               clearInterval(interval);
             });
-          }, 500);
+          }, 2000);
         } catch (error) {
           console.error(error);
         }
@@ -94,7 +106,7 @@ export class JoySigner implements SmartAccountSigner<HDAccount> {
               }
               clearInterval(interval);
             });
-          }, 500);
+          }, 2000);
         } catch (error) {
           console.error(error);
         }

@@ -6,14 +6,14 @@ import { WebApp } from "@vkruglikov/react-telegram-web-app/lib/core/twa-types";
 import "./App.css";
 import { buildConnectTokenAndUrl, buildSendTxTokenAndUrl, buildSignMsgTokenAndUrl, buildSignTxTokenAndUrl } from "./helper";
 import { api, ConnectResp, QueryKey, SendTxResp, SignResp, SignTxResp} from "./api";
-import { JoySigner } from "./evm-aa/signer";
-import { getAAProvider } from "./evm-aa/provider";
-import { useCurrentAddress, useUpdateAddress } from "./hooks/useAccount";
+import { useCurrentAddress, useUpdateAaAddress, useUpdateAddress } from "./hooks/useAccount";
+import { EvmAA } from "./components/EvmAA";
 
 const USER_REJECTED = 'rejected'
 
 export default function App() {
   const updateAddress = useUpdateAddress();
+  const updateAaAddress = useUpdateAaAddress()
   const address = useCurrentAddress();
   const [message, setMessage] = useState<string>("Hello");
   const [toAddress, setToAddress] = useState<string>("0x8ac36d0e764FF17dcF13b2465e77b4fe125EC2bC");
@@ -214,21 +214,19 @@ export default function App() {
     }
   };
 
-  const onCreate = async () => {
-    const signer = new JoySigner(webApp, address as Hex)
-    const provider = await getAAProvider(signer)
-    const aaAddress = provider.account?.getAddress()
-    console.log("aaAddress", aaAddress);
+  const disconnect = () => {
+    updateAaAddress(undefined);
+    updateAddress(undefined);
   }
 
   return (
     <div id="app">
       <div className="text-2xl sticky font-bold text-center">Mini App wallet connect demo</div>
       {address ? (
-        <div className="mb-[30px]">
+        <div className="mb-[10px]">
           <h1 className="text-xl mb-4">Connected: </h1>
           <div>{address}</div>
-          <div className="my-[30px]">
+          <div className="my-[12px]">
             <h2 className="text-xl">Sign message: </h2>
             <input
               type="text"
@@ -274,18 +272,13 @@ export default function App() {
                 {sendLoading ? <span className="loading loading-spinner loading-md" /> : "Send"}
               </button>
             </div>
-            <div className="divider" />
           </div>
 
-          <button className="btn btn-primary capitalize w-[200px] mt-[30px]" onClick={onCreate}>
-            Create AA
-          </button>
+          <div className="divider" />
+          <EvmAA />
 
           <div className="divider" />
-          <button
-            className="btn btn-primary capitalize w-[120px]"
-            onClick={() => updateAddress(null)}
-          >
+          <button className="btn btn-primary capitalize w-[120px]" onClick={disconnect}>
             Disconnect
           </button>
           <div className="divider" />

@@ -1,6 +1,7 @@
 import {defineConfig} from "vite";
 import react from "@vitejs/plugin-react";
 import mkcert from "vite-plugin-mkcert";
+import {NodeGlobalsPolyfillPlugin} from "@esbuild-plugins/node-globals-polyfill";
 import {esbuildCommonjs, viteCommonjs} from "@originjs/vite-plugin-commonjs";
 
 const plugins: any[] = [
@@ -42,11 +43,16 @@ export default defineConfig(({mode}) => {
     },
     optimizeDeps: {
       esbuildOptions: {
+        // Node.js global to browser globalThis
+        define: {
+          global: "globalThis",
+        },
+        // Enable esbuild polyfill plugins
         plugins: [
           esbuildCommonjs(["axios-mock-adapter"]),
-          // NodeGlobalsPolyfillPlugin({
-          //   buffer: true,
-          // }),
+          NodeGlobalsPolyfillPlugin({
+            buffer: true,
+          }),
         ],
         // target: ['chrome60', 'firefox60', 'safari11', 'edge18'],
       },

@@ -20,7 +20,7 @@ const Comma = '%2C'
  * @param action 
  * @returns 
  */
-export const generateToken = (initData: string, action: Action) => {
+export const generateToken = (initData: string, action: Action, isIdentical = false) => {
   if (initData.length === 0) {
     throw new Error("Telegram webApp initData cannot be empty");
   }
@@ -30,11 +30,11 @@ export const generateToken = (initData: string, action: Action) => {
   const rand = [...Array(8)].map(() => Math.floor(Math.random() * 16).toString(16)).join("");
   switch (action) {
     case Action.Connect: 
-      return `conn${hash}${rand}`
+      return `conn${hash}${isIdentical ? "" : rand}`
     case Action.SignMsg:
-      return `sign${hash}${rand}`;
+      return `sign${hash}${isIdentical ? "" : rand}`;
     default:
-      return `send${hash}${rand}`;
+      return `send${hash}${isIdentical ? "" : rand}`;
   }
 }
 
@@ -50,14 +50,14 @@ const BASE_INIT = {
  * @param initData the initData of telegram web app object to generate token{@link https://core.telegram.org/bots/webapps#initializing-mini-apps}
  * @returns the token and url for connection with JoyID Passkey Wallet
  */
-export const buildConnectTokenAndUrl = (initData: string) => {
-  const token = generateToken(initData, Action.Connect);
+export const buildConnectTokenAndUrl = (initData: string, isIdentical = false) => {
+  const token = generateToken(initData, Action.Connect, isIdentical);
   const url = buildConnectUrl({
     ...BASE_INIT,
     miniAppToken: token,
     callbackUrl: CALLBACK_SERVER_URL,
   });
-  return {token, url}
+  return {token, url};
 };
 
 /**
@@ -68,8 +68,8 @@ export const buildConnectTokenAndUrl = (initData: string) => {
  * @param message the message to be signed
  * @returns the token and url for signing with JoyID Passkey Wallet
  */
-export const buildSignMsgTokenAndUrl = (initData: string, address: Hex, message: string | Uint8Array) => {
-  const token = generateToken(initData, Action.SignMsg);
+export const buildSignMsgTokenAndUrl = (initData: string, address: Hex, message: string | Uint8Array, isIdentical = false) => {
+  const token = generateToken(initData, Action.SignMsg, isIdentical);
   const url = buildSignMessageUrl(message, {
     ...BASE_INIT,
     address,
@@ -87,8 +87,8 @@ export const buildSignMsgTokenAndUrl = (initData: string, address: Hex, message:
  * @param tx the Ethereum transaction to be signed and sended
  * @returns the token and url for transaction sending with JoyID Passkey Wallet
  */
-export const buildSignTxTokenAndUrl = (initData: string, address: Hex, tx: TransactionRequest) => {
-  const token = generateToken(initData, Action.SendTx);
+export const buildSignTxTokenAndUrl = (initData: string, address: Hex, tx: TransactionRequest, isIdentical = false) => {
+  const token = generateToken(initData, Action.SendTx, isIdentical);
   const url = buildSignTxURL({
     ...BASE_INIT,
     tx,
