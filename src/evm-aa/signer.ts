@@ -3,6 +3,7 @@ import { type Hex, TypedDataDefinition } from "viem";
 import { WebApp } from "@vkruglikov/react-telegram-web-app/lib/core/twa-types";
 import { buildConnectTokenAndUrl, buildSignMsgTokenAndUrl, buildSignTypedDataTokenAndUrl } from "../helper";
 import { ConnectResp, SignResp, USER_REJECTED, api } from "../api";
+import { IS_ANDROID } from "../env/browser";
 
 export class JoySigner implements SmartAccountSigner {
   address: Hex;
@@ -22,6 +23,14 @@ export class JoySigner implements SmartAccountSigner {
       this.webApp.openLink(url);
     } else {
       window.open(url, '_blank');
+    }
+  }
+
+  onConfirm = (url: string) => {
+    if (this.webApp?.showConfirm) {
+      this.webApp.showConfirm("Sign message with JoyID", () => {
+        this.openUrl(url)
+      })
     }
   }
 
@@ -63,7 +72,11 @@ export class JoySigner implements SmartAccountSigner {
       } else {
         try {
           const {token, url} = buildSignMsgTokenAndUrl(this.webApp.initData, this.address, msg);
-          this.openUrl(url);
+          if (IS_ANDROID) {
+            this.onConfirm(url)
+          } else {
+            this.openUrl(url);
+          }
           const interval = setInterval(() => {
             api.getTgBotMessage<SignResp>(token).then(({signature}) => {
               if (signature === USER_REJECTED) {
