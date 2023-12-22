@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {Hex, encodeFunctionData, parseAbi, stringToBytes} from "viem";
+import {Hex, stringToBytes} from "viem";
 import {useWebApp} from "@vkruglikov/react-telegram-web-app";
 import {WebApp} from "@vkruglikov/react-telegram-web-app/lib/core/twa-types";
 import { useAaAddress, useCurrentAddress, useUpdateAaAddress } from "../hooks/useAccount";
@@ -7,13 +7,6 @@ import { JoySigner } from "../evm-aa/signer";
 import { getAAProvider } from "../evm-aa/provider";
 import { ECDSAProvider } from "@zerodev/sdk";
 import { useEffect } from "react";
-
-// The NFT contract we will be interacting with
-const contractAddress = '0x34bE7f35132E97915633BC1fc020364EA5134863'
-const contractABI = parseAbi([
-  'function mint(address _to) public',
-  'function balanceOf(address owner) external view returns (uint256 balance)'
-])
 
 export const EvmAA = () => {
   const address = useCurrentAddress();
@@ -25,7 +18,6 @@ export const EvmAA = () => {
 
   const [createLoading, setCreateLoading] = useState(false);
   const [signLoading, setSignLoading] = useState(false);
-  const [mintLoading, setMintLoading] = useState(false);
 
   useEffect(() => {
     const init = async () => {
@@ -50,28 +42,6 @@ export const EvmAA = () => {
     setSignLoading(false)
   };
 
-  const onMintNFT = async () => {
-    setMintLoading(true)
-    // Mint the NFT
-    try {
-      const {hash} = await provider!.sendUserOperation({
-        target: contractAddress,
-        data: encodeFunctionData({
-          abi: contractABI,
-          functionName: "mint",
-          args: [aaAddress!],
-        }),
-      });
-      await provider!.waitForUserOperationTransaction(hash as Hex);
-      alert(`Mint NFT transaction hash: ${hash}`);
-    } catch (error) {
-      console.error(error)
-      alert(`Mint NFT error: ${error}`);
-    } finally {
-      setMintLoading(false)
-    }
-  }
-
   return (
     <div>
       <button className="btn btn-primary capitalize w-[200px]" onClick={onCreate}>
@@ -91,9 +61,6 @@ export const EvmAA = () => {
               <div className="break-words">{signature}</div>
             </div>
           )}
-          <button className="btn btn-primary capitalize w-[200px] mt-[12px]" onClick={onMintNFT}>
-            {mintLoading ? <span className="loading loading-spinner loading-md" /> : "Mint NFT"}
-          </button>
         </div>
       )}
     </div>
