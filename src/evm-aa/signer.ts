@@ -78,7 +78,7 @@ export class JoySigner implements SmartAccountSigner {
           console.error(error);
         }
       }
-    });
+    });   
     return promise;
   };
 
