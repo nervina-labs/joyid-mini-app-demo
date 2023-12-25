@@ -129,7 +129,7 @@ export const EvmAA = () => {
           </button>
           {sessionAddress && (
             <div className="mt-[12px]">
-              <div>{`Session Key Address: ${sessionAddress}`}</div>
+              <div>The session key has been created successfully</div>
               <button className="btn btn-primary capitalize w-[240px] mt-[12px]" onClick={mintWithSessionKey}>
                 {sessionMintLoading ? <span className="loading loading-spinner loading-md" /> : "Mint NFT with Session Key"}
               </button>
