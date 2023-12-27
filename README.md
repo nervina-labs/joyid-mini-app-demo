@@ -18,6 +18,8 @@ pnpm install
 2. Update `CALLBACK_SERVER_URL` and `JOYID_APP_URL` in `env/index.ts`
 
 > The `CALLBACK_SERVER_URL` is your own server url like the `https://api.example.com/bot/api/v1/` and the more information is provided below.
+> 
+> The `JOYID_APP_URL` is the joyid wallet app url, please set to https://testnet.joyid.dev for staging env, or https://app.joy.id for product env.
 
 3. Build and Test
 
